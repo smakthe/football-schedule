@@ -384,33 +384,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   white-space: nowrap;
 }
 
-/* Mobile responsive match row - STACKS VERTICALLY ON SMALL SCREENS */
-@media (max-width: 480px) {
-  .match-row {
-    grid-template-columns: 1fr auto;
-    grid-template-rows: auto auto;
-    row-gap: 12px;
-    column-gap: 8px;
-  }
-  .team.home {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-    justify-content: flex-start;
-    text-align: left;
-    flex-direction: row-reverse;
-  }
-  .team.away {
-    grid-column: 1 / 2;
-    grid-row: 2 / 3;
-  }
-  .kickoff {
-    grid-column: 2 / 3;
-    grid-row: 1 / 3;
-    align-items: flex-end;
-  }
-  .kickoff-stack { align-items: flex-end; }
-  .uk-ref { text-align: right; }
-}
+
 
 /* UCL section */
 .ucl-rounds { border-top: 1px solid var(--border); padding: 4px 16px 12px; }
