@@ -20,7 +20,8 @@ body {
 }
 
 #root {
-  padding: env(safe-area-inset-top, 20px) env(safe-area-inset-right, 14px) env(safe-area-inset-bottom, 48px) env(safe-area-inset-left, 14px);
+  padding: 20px 14px 48px 14px;
+  padding: max(20px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) max(48px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
   min-height: 100vh;
 }
 
