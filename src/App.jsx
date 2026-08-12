@@ -107,19 +107,19 @@ export default function App() {
           <div key={selectedDate + "-top"} className={`day-transition slide-${slideDir}`}>
             <div className="headline-row">
               <h1 className="headline">{longDate(selectedDate)}</h1>
+              {!isEmpty && (
+                <div className="day-actions">
+                  <button className="action-btn" onClick={handleCopyDay}>{copied ? "\u2713 Copied" : "\u2398 Copy"}</button>
+                  <button className="action-btn" onClick={exportDay}>&#128197; Export</button>
+                </div>
+              )}
             </div>
             <p className="summary-line">
               {isEmpty && totalMatches === 0
-                ? "No mathes"
+                ? "No matches"
                 : <><b>{totalMatches}</b> {totalMatches === 1 ? "match" : "matches"} across <b>{activeLeagueCount + (activeUclRounds.length ? 1 : 0)}</b> {(activeLeagueCount + (activeUclRounds.length ? 1 : 0)) === 1 ? "league" : "leagues"}</>
               }
             </p>
-            {!isEmpty && (
-              <div className="day-actions">
-                <button className="action-btn" onClick={exportDay}>&#128197; Export day</button>
-                <button className="action-btn" onClick={handleCopyDay}>{copied ? "\u2713 Copied" : "\u2398 Copy as text"}</button>
-              </div>
-            )}
           </div>
           <DateStrip
             selected={selectedDate}

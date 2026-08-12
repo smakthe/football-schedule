@@ -1,6 +1,7 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { MIN_DATE, MAX_DATE, WD_S } from '../data/constants.js';
 import { addDays, clampISO, fromISO, cellLabel } from '../utils/dates.js';
+import CalendarDots from './CalendarDots.jsx';
 
 export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo }) {
   const scrollerRef = useRef(null);
@@ -63,7 +64,11 @@ export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo })
             >
               <span className="day-wd" aria-hidden="true">{WD_S[d.getDay()]}</span>
               <span className="day-num" aria-hidden="true">{d.getDate()}</span>
-              <span className={"day-dot" + (hasMatch ? " on" : "")} aria-hidden="true" />
+              {dayInfo[iso]?.c?.length > 0 ? (
+                <CalendarDots ids={dayInfo[iso].c} />
+              ) : (
+                <span className="day-dot" aria-hidden="true" />
+              )}
             </button>
           );
         })}
