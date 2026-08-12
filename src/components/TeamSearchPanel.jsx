@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import fixtures from '../data/fixtures.json';
 import { DISPLAY_ORDER } from '../data/constants.js';
 import { TEAM_COMP, TEAMS_BY_COMP } from '../data/precomputed.js';
-import { LEAGUE_THEMES } from '../config/leagueThemes.js';
+import { getThemeAccent } from '../config/leagueThemes.js';
 import { searchTeams } from '../utils/search.js';
 import Crest from './Crest.jsx';
 
@@ -50,7 +50,7 @@ export default function TeamSearchPanel({ onPick, leagueFilter }) {
       ) : (
         (leagueFilter != null ? [leagueFilter] : DISPLAY_ORDER).map((compId) => (
           <div key={compId} className="team-browse-group">
-            <div className="team-browse-heading" style={{ color: LEAGUE_THEMES[compId].colors.secondary }}>{fixtures.comps[compId].name}</div>
+            <div className="team-browse-heading" style={{ color: getThemeAccent(compId) }}>{fixtures.comps[compId].name}</div>
             <div className="team-result-list">
               {TEAMS_BY_COMP[compId].map((t) => <TeamResultRow key={t.id} id={t.id} onPick={onPick} />)}
             </div>

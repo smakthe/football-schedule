@@ -1,6 +1,6 @@
 import React from 'react';
 import fixtures from '../data/fixtures.json';
-import CompBadge from './CompBadge.jsx';
+import SectionHeader from './SectionHeader.jsx';
 
 export default function UCLSection({ rounds }) {
   if (!rounds.length) return null;
@@ -8,13 +8,10 @@ export default function UCLSection({ rounds }) {
   
   return (
     <section className="league-section ucl" style={{ "--accent": comp.color, "--accent2": comp.color2 }}>
-      <div className="league-header">
-        <CompBadge comp={comp} />
-        <div className="league-title">
-          <h2>{comp.name}</h2>
-          <span className="league-sub">Pairings confirmed after the 27 Aug 2026 draw</span>
-        </div>
-      </div>
+      <SectionHeader 
+        comp={comp} 
+        subtitle="Pairings confirmed after the 27 Aug 2026 draw" 
+      />
       <div className="ucl-rounds">
         {rounds.map((r, i) => (
           <div className="ucl-round" key={i}>

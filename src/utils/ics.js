@@ -53,3 +53,31 @@ export function downloadICS(filename, content) {
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+// Higher-level export helpers
+import fixtures from '../data/fixtures.json';
+
+export function exportSingleMatch(m, date) {
+  const [homeId, awayId, time, compId, round] = m;
+  const comp = fixtures.comps[compId];
+  const vevent = matchToVEvent({
+    dateISO: date, compName: comp.name, 
+    homeName: fixtures.teams[homeId], awayName: fixtures.teams[awayId], 
+    time, round, compId,
+  });
+  downloadICS(`${fixtures.teams[homeId]}-vs-${fixtures.teams[awayId]}.ics`.replace(/[^A-Za-z0-9.-]+/g, "-"), buildICS([vevent]));
+}
+
+export function exportTeamSchedule(teamId, upcomingMatches) {
+  const teamName = fixtures.teams[teamId];
+  const vevents = upcomingMatches.map((f) => matchToVEvent({
+    dateISO: f.date,
+    compName: fixtures.comps[f.compId].name,
+    homeName: f.isHome ? teamName : fixtures.teams[f.oppId],
+    awayName: f.isHome ? fixtures.teams[f.oppId] : teamName,
+    time: f.time,
+    round: f.round,
+    compId: f.compId,
+  }));
+  downloadICS(`${teamName.replace(/[^A-Za-z0-9]+/g, "-")}-remaining-fixtures.ics`, buildICS(vevents));
+}

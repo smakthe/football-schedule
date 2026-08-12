@@ -73,3 +73,9 @@ export const THEME_CSS_VARS = [
   "--text-dim",
   "--text-faint"
 ];
+
+// Helper to get the fallback accent color for UI components
+import fixtures from '../data/fixtures.json';
+export function getThemeAccent(compId) {
+  return LEAGUE_THEMES[compId]?.colors.secondary || fixtures.comps[compId]?.color2;
+}

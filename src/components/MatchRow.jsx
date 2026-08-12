@@ -2,8 +2,8 @@ import React from 'react';
 import fixtures from '../data/fixtures.json';
 import { M_HOME, M_AWAY, M_TIME, M_COMP, M_ROUND } from '../data/constants.js';
 import { rivalryLabel, TEAM_COMP } from '../data/precomputed.js';
-import { LEAGUE_THEMES } from '../config/leagueThemes.js';
-import { matchToVEvent, buildICS, downloadICS } from '../utils/ics.js';
+import { getThemeAccent } from '../config/leagueThemes.js';
+import { exportSingleMatch } from '../utils/ics.js';
 import Crest from './Crest.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
 
@@ -12,15 +12,10 @@ function MatchRow({ m, date, onTeamSelect }) {
   const riv = rivalryLabel(homeId, awayId);
   const isUcl = compId === 'ucl';
   const showLeague = compId !== null && !isUcl;
-  const theme = showLeague ? LEAGUE_THEMES[compId] : null;
   
   function exportMatch(e) {
     e.stopPropagation();
-    const comp = fixtures.comps[compId];
-    const vevent = matchToVEvent({
-      dateISO: date, compName: comp.name, homeName: fixtures.teams[homeId], awayName: fixtures.teams[awayId], time, round: m[M_ROUND], compId,
-    });
-    downloadICS(`${fixtures.teams[homeId]}-vs-${fixtures.teams[awayId]}.ics`.replace(/[^A-Za-z0-9.-]+/g, "-"), buildICS([vevent]));
+    exportSingleMatch(m, date);
   }
   
   return (
@@ -38,7 +33,7 @@ function MatchRow({ m, date, onTeamSelect }) {
         <Crest teamId={awayId} />
         <span className="team-name">{fixtures.teams[awayId]}</span>
         {showLeague && (
-          <span className="league-badge" style={{ color: theme.colors.secondary }}>{fixtures.comps[compId].short}</span>
+          <span className="league-badge" style={{ color: getThemeAccent(compId) }}>{fixtures.comps[compId].short}</span>
         )}
       </button>
     </div>
