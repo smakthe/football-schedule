@@ -3,7 +3,7 @@ import { MO, WD_S, MIN_DATE, MAX_DATE } from '../data/constants.js';
 import { getMonthCells, fromISO, addDays, clampISO, addMonths, cellLabel } from '../utils/dates.js';
 import CalendarDots from './CalendarDots.jsx';
 
-export default function MonthView({ cursor, onNavigate, selectedDate, today, onPick, dayInfo }) {
+export default function MonthView({ cursor, onNavigate, selectedDate, today, onPick, dayInfo, leagueFilter }) {
   const cells = useMemo(() => getMonthCells(cursor), [cursor]);
   const c = fromISO(cursor);
   const gridRef = useRef(null);
@@ -77,7 +77,7 @@ export default function MonthView({ cursor, onNavigate, selectedDate, today, onP
             >
               {info && info.riv.length > 0 && <span className="cal-star" aria-hidden="true">&#9733;</span>}
               <span className="month-daynum" aria-hidden="true">{fromISO(iso).getDate()}</span>
-              <CalendarDots ids={info ? info.c : []} />
+              <CalendarDots ids={leagueFilter != null ? (info ? info.c : []).filter(id => id === leagueFilter) : (info ? info.c : [])} />
             </button>
           );
         })}

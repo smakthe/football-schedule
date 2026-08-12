@@ -3,7 +3,7 @@ import { MIN_DATE, MAX_DATE, WD_S } from '../data/constants.js';
 import { addDays, clampISO, fromISO, cellLabel } from '../utils/dates.js';
 import CalendarDots from './CalendarDots.jsx';
 
-export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo }) {
+export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo, leagueFilter }) {
   const scrollerRef = useRef(null);
   const days = useMemo(() => {
     const arr = [];
@@ -64,11 +64,15 @@ export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo })
             >
               <span className="day-wd" aria-hidden="true">{WD_S[d.getDay()]}</span>
               <span className="day-num" aria-hidden="true">{d.getDate()}</span>
-              {dayInfo[iso]?.c?.length > 0 ? (
-                <CalendarDots ids={dayInfo[iso].c} />
-              ) : (
-                <span className="day-dot" aria-hidden="true" />
-              )}
+              {(() => {
+                const rawIds = dayInfo[iso]?.c || [];
+                const dotIds = leagueFilter != null ? rawIds.filter(id => id === leagueFilter) : rawIds;
+                return dotIds.length > 0 ? (
+                  <CalendarDots ids={dotIds} />
+                ) : (
+                  <span className="day-dot" aria-hidden="true" />
+                );
+              })()}
             </button>
           );
         })}

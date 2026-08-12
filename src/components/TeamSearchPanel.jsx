@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import fixtures from '../data/fixtures.json';
 import { DISPLAY_ORDER } from '../data/constants.js';
 import { TEAM_COMP, TEAMS_BY_COMP } from '../data/precomputed.js';
+import { LEAGUE_THEMES } from '../config/leagueThemes.js';
 import { searchTeams } from '../utils/search.js';
 import Crest from './Crest.jsx';
 
@@ -17,9 +18,13 @@ function TeamResultRow({ id, onPick }) {
   );
 }
 
-export default function TeamSearchPanel({ onPick }) {
+export default function TeamSearchPanel({ onPick, leagueFilter }) {
   const [query, setQuery] = useState("");
-  const results = useMemo(() => searchTeams(query), [query]);
+  const results = useMemo(() => {
+    const raw = searchTeams(query);
+    if (raw && leagueFilter != null) return raw.filter(t => TEAM_COMP[t.id] === leagueFilter);
+    return raw;
+  }, [query, leagueFilter]);
   
   return (
     <div className="calendar-view">
@@ -43,9 +48,9 @@ export default function TeamSearchPanel({ onPick }) {
           <p className="empty-sub" style={{ textAlign: "center", marginTop: 24 }}>No teams match &ldquo;{query}&rdquo;.</p>
         )
       ) : (
-        DISPLAY_ORDER.map((compId) => (
+        (leagueFilter != null ? [leagueFilter] : DISPLAY_ORDER).map((compId) => (
           <div key={compId} className="team-browse-group">
-            <div className="team-browse-heading" style={{ color: fixtures.comps[compId].color2 }}>{fixtures.comps[compId].name}</div>
+            <div className="team-browse-heading" style={{ color: LEAGUE_THEMES[compId].colors.secondary }}>{fixtures.comps[compId].name}</div>
             <div className="team-result-list">
               {TEAMS_BY_COMP[compId].map((t) => <TeamResultRow key={t.id} id={t.id} onPick={onPick} />)}
             </div>

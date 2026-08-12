@@ -1,7 +1,8 @@
 import React from 'react';
 import fixtures from '../data/fixtures.json';
 import { M_HOME, M_AWAY, M_TIME, M_COMP, M_ROUND } from '../data/constants.js';
-import { rivalryLabel } from '../data/precomputed.js';
+import { rivalryLabel, TEAM_COMP } from '../data/precomputed.js';
+import { LEAGUE_THEMES } from '../config/leagueThemes.js';
 import { matchToVEvent, buildICS, downloadICS } from '../utils/ics.js';
 import Crest from './Crest.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
@@ -9,6 +10,9 @@ import { KickoffTime } from './KickoffTime.jsx';
 function MatchRow({ m, date, onTeamSelect }) {
   const homeId = m[M_HOME], awayId = m[M_AWAY], time = m[M_TIME], compId = m[M_COMP];
   const riv = rivalryLabel(homeId, awayId);
+  const isUcl = compId === 'ucl';
+  const showLeague = compId !== null && !isUcl;
+  const theme = showLeague ? LEAGUE_THEMES[compId] : null;
   
   function exportMatch(e) {
     e.stopPropagation();
@@ -33,6 +37,9 @@ function MatchRow({ m, date, onTeamSelect }) {
       <button className="team away" onClick={() => onTeamSelect(awayId)}>
         <Crest teamId={awayId} />
         <span className="team-name">{fixtures.teams[awayId]}</span>
+        {showLeague && (
+          <span className="league-badge" style={{ color: theme.colors.secondary }}>{fixtures.comps[compId].short}</span>
+        )}
       </button>
     </div>
   );

@@ -6,6 +6,7 @@ import { shortDate, longDate, fromISO } from '../utils/dates.js';
 import { matchToVEvent, buildICS, downloadICS } from '../utils/ics.js';
 import Crest from './Crest.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
+import { LEAGUE_THEMES } from '../config/leagueThemes.js';
 
 function useTeamFixtures(teamId) {
   return useMemo(() => {
@@ -38,10 +39,11 @@ function useTeamFixtures(teamId) {
 
 function NextFixtureCard({ f, teamId, onPick }) {
   const comp = fixtures.comps[f.compId];
+  const accent = LEAGUE_THEMES[f.compId]?.colors.secondary || comp.color2;
   const homeId = f.isHome ? teamId : f.oppId;
   const awayId = f.isHome ? f.oppId : teamId;
   return (
-    <button className="next-fixture-card" style={{ "--accent2": comp.color2 }} onClick={() => onPick(f.date)}>
+    <button className="next-fixture-card" style={{ "--accent2": accent }} onClick={() => onPick(f.date)}>
       <span className="nf-label">
         <span className={`venue-badge ${f.isHome ? 'home' : 'away'}`} title={f.isHome ? 'Home' : 'Away'}>{f.isHome ? 'H' : 'A'}</span>
         Next fixture &middot; {comp.name}{f.round ? ` \u00b7 Matchday ${f.round}` : ""}
@@ -61,6 +63,7 @@ function NextFixtureCard({ f, teamId, onPick }) {
 
 function TeamFixtureRow({ f, onPick }) {
   const comp = fixtures.comps[f.compId];
+  const accent = LEAGUE_THEMES[f.compId]?.colors.secondary || comp.color2;
   return (
     <button className="team-fixture-row" onClick={() => onPick(f.date)}>
       <span className="tf-date">{f.date === f.date2 ? shortDate(f.date) : `${shortDate(f.date)}\u2013${fromISO(f.date2).getDate()}`}</span>
@@ -69,7 +72,7 @@ function TeamFixtureRow({ f, onPick }) {
         <Crest teamId={f.oppId} size={22} />
         <span>vs {fixtures.teams[f.oppId]}</span>
       </span>
-      <span className="tf-meta" style={{ color: comp.color2 }}>{comp.short}</span>
+      <span className="tf-meta" style={{ color: accent }}>{comp.short}</span>
     </button>
   );
 }
@@ -105,7 +108,7 @@ export default function TeamDetailView({ teamId, onBack, onPick, today }) {
         <Crest teamId={teamId} size={48} />
         <div className="team-header-text">
           <h2>{fixtures.teams[teamId]}</h2>
-          <span className="league-sub" style={{ color: comp.color2 }}>{comp.name}</span>
+          <span className="league-sub" style={{ color: LEAGUE_THEMES[TEAM_COMP[teamId]]?.colors.secondary || comp.color2 }}>{comp.name}</span>
         </div>
         <button className="jump-today" onClick={onBack}>Change</button>
       </div>

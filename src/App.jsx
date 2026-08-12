@@ -1,5 +1,6 @@
-import React, { useState, useMemo, Suspense, lazy } from 'react';
+import React, { useState, useMemo, useEffect, Suspense, lazy } from 'react';
 import fixtures from './data/fixtures.json';
+import { LEAGUE_THEMES, THEME_CSS_VARS } from './config/leagueThemes.js';
 import {
   M_COMP, M_HOME, M_AWAY, M_TIME, M_ROUND,
   COMP_EPL, COMP_LALIGA, COMP_LIGUE1, COMP_BUNDESLIGA,
@@ -10,6 +11,7 @@ import { todayISO, clampISO, addMonths, longDate } from './utils/dates.js';
 import { matchToVEvent, buildICS, downloadICS } from './utils/ics.js';
 import { copyText, buildShareText } from './utils/clipboard.js';
 
+import LeagueFilter from './components/LeagueFilter.jsx';
 import ViewToggle from './components/ViewToggle.jsx';
 import DateStrip from './components/DateStrip.jsx';
 import LeagueSection from './components/LeagueSection.jsx';
@@ -29,6 +31,20 @@ export default function App() {
   // the day you actually have open until you tap a specific cell.
   const [calendarCursor, setCalendarCursor] = useState(todayISO());
   const [selectedTeamId, setSelectedTeamId] = useState(null);
+  const [leagueFilter, setLeagueFilter] = useState(null);
+
+  // Sync league theme variables to <html> so body background also changes
+  useEffect(() => {
+    const root = document.documentElement;
+    if (leagueFilter !== null && LEAGUE_THEMES[leagueFilter]) {
+      const theme = LEAGUE_THEMES[leagueFilter].cssVars;
+      for (const [key, val] of Object.entries(theme)) {
+        root.style.setProperty(key, val);
+      }
+    } else {
+      THEME_CSS_VARS.forEach(key => root.style.removeProperty(key));
+    }
+  }, [leagueFilter]);
 
   function openView(mode) {
     if (mode !== "day") setCalendarCursor(selectedDate);
@@ -70,15 +86,21 @@ export default function App() {
     return fixtures.ucl.rounds.filter((r) => selectedDate >= r.d && selectedDate <= r.d2);
   }, [selectedDate]);
 
-  const totalMatches = DISPLAY_ORDER.reduce((s, id) => s + matchesByComp[id].length, 0);
-  const activeLeagueCount = DISPLAY_ORDER.filter((id) => matchesByComp[id].length > 0).length;
-  const isEmpty = totalMatches === 0 && activeUclRounds.length === 0;
+  const filteredOrder = leagueFilter != null
+    ? DISPLAY_ORDER.filter(id => id === leagueFilter)
+    : DISPLAY_ORDER;
+  const showUcl = leagueFilter === null;
+
+  const totalMatches = filteredOrder.reduce((s, id) => s + matchesByComp[id].length, 0);
+  const activeLeagueCount = filteredOrder.filter((id) => matchesByComp[id].length > 0).length;
+  const filteredUclRounds = showUcl ? activeUclRounds : [];
+  const isEmpty = totalMatches === 0 && filteredUclRounds.length === 0;
 
   const [copied, setCopied] = useState(false);
 
   function exportDay() {
     const vevents = [];
-    DISPLAY_ORDER.forEach((id) => {
+    filteredOrder.forEach((id) => {
       matchesByComp[id].forEach((m) => {
         vevents.push(matchToVEvent({
           dateISO: selectedDate, compName: fixtures.comps[id].name,
@@ -95,11 +117,12 @@ export default function App() {
   }
 
   return (
-    <div className="shell">
+    <div className="shell" data-league={leagueFilter}>
       <div className="eyebrow">
         <span>2026/27 European Club Season</span>
       </div>
 
+      <LeagueFilter active={leagueFilter} onChange={setLeagueFilter} />
       <ViewToggle mode={viewMode} onChange={openView} />
 
       {viewMode === "day" && (
@@ -112,7 +135,7 @@ export default function App() {
               <p className="summary-line">
                 {isEmpty && totalMatches === 0
                   ? "No matches"
-                  : <><b>{totalMatches}</b> {totalMatches === 1 ? "match" : "matches"} across <b>{activeLeagueCount + (activeUclRounds.length ? 1 : 0)}</b> {(activeLeagueCount + (activeUclRounds.length ? 1 : 0)) === 1 ? "league" : "leagues"}</>
+                  : <><b>{totalMatches}</b> {totalMatches === 1 ? "match" : "matches"} across <b>{activeLeagueCount + (filteredUclRounds.length ? 1 : 0)}</b> {(activeLeagueCount + (filteredUclRounds.length ? 1 : 0)) === 1 ? "league" : "leagues"}</>
                 }
               </p>
               {!isEmpty && (
@@ -128,16 +151,17 @@ export default function App() {
             onSelect={handleDateSelect}
             matchDateSet={MATCH_DATE_SET}
             dayInfo={fixtures.dayInfo}
+            leagueFilter={leagueFilter}
           />
           <div key={selectedDate + "-bottom"} className={`day-transition slide-${slideDir}`}>
             {isEmpty ? (
               <EmptyState />
             ) : (
               <>
-                {DISPLAY_ORDER.map((id) => (
+                {filteredOrder.map((id) => (
                   <LeagueSection key={id} comp={fixtures.comps[id]} matches={matchesByComp[id]} date={selectedDate} onTeamSelect={viewTeamSchedule} />
                 ))}
-                <UCLSection rounds={activeUclRounds} />
+                {showUcl && <UCLSection rounds={activeUclRounds} />}
               </>
             )}
           </div>
@@ -153,6 +177,7 @@ export default function App() {
             today={todayISO()}
             onPick={pickDay}
             dayInfo={fixtures.dayInfo}
+            leagueFilter={leagueFilter}
           />
         </Suspense>
       )}
@@ -160,7 +185,7 @@ export default function App() {
       {viewMode === "team" && (
         <Suspense fallback={<div className="empty-state">Loading teams...</div>}>
           {selectedTeamId == null ? (
-            <TeamSearchPanel onPick={setSelectedTeamId} />
+            <TeamSearchPanel onPick={setSelectedTeamId} leagueFilter={leagueFilter} />
           ) : (
             <TeamDetailView teamId={selectedTeamId} onBack={() => setSelectedTeamId(null)} onPick={pickDay} today={todayISO()} />
           )}
