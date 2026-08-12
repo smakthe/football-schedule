@@ -16,7 +16,7 @@ export const COMP_UCL = 4;
 export const DISPLAY_ORDER = [COMP_EPL, COMP_LALIGA, COMP_BUNDESLIGA, COMP_LIGUE1];
 
 // Season date bounds
-export const MIN_DATE = "2026-07-07";
+export const MIN_DATE = "2026-08-01";
 export const MAX_DATE = "2027-06-30";
 
 // Source timezone map — used for kickoff time conversion (README §8)
