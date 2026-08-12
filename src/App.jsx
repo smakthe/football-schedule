@@ -46,6 +46,11 @@ export default function App() {
     }
   }, [leagueFilter]);
 
+  // Reset selected team when league filter changes so it reverts to the list of clubs
+  useEffect(() => {
+    setSelectedTeamId(null);
+  }, [leagueFilter]);
+
   function openView(mode) {
     if (mode !== "day") setCalendarCursor(selectedDate);
     setViewMode(mode);

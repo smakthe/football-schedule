@@ -39,7 +39,7 @@ export default function LeagueFilter({ active, onChange }) {
     clearCollapseTimer();
     collapseTimer.current = setTimeout(() => {
       setExpanded(false);
-    }, 400);
+    }, 100);
   }, [clearCollapseTimer]);
 
   const hasFilter = active !== null;
