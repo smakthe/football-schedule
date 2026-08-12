@@ -27,7 +27,7 @@ export default function TeamSearchPanel({ onPick }) {
         <input
           type="text"
           className="search-input"
-          placeholder="Search teams…"
+          placeholder="Search clubs…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           autoFocus

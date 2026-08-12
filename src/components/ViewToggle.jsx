@@ -30,7 +30,7 @@ export default function ViewToggle({ mode, onChange }) {
           className={mode === m ? "active" : ""}
           onClick={() => onChange(m)}
         >
-          {m}
+          {m === "team" ? "club" : m}
         </button>
       ))}
     </div>

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import fixtures from '../data/fixtures.json';
 import { M_HOME, M_AWAY, M_COMP, M_TIME, M_ROUND, COMP_BUNDESLIGA } from '../data/constants.js';
 import { TEAM_COMP } from '../data/precomputed.js';
@@ -75,6 +75,10 @@ function TeamFixtureRow({ f, onPick }) {
 }
 
 export default function TeamDetailView({ teamId, onBack, onPick, today }) {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const teamFixtures = useTeamFixtures(teamId);
   const upcoming = teamFixtures.filter((f) => f.date2 >= today);
   const next = upcoming[0];
