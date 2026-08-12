@@ -64,9 +64,12 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 }
 .jump-today:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
 
+.day-top-stable {
+  min-height: 100px;
+}
 .headline-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 4px;
@@ -96,12 +99,12 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .summary-line {
   color: var(--text-dim);
   font-size: 13.5px;
-  margin: 0 0 18px;
+  margin: 0 0 6px;
   line-height: 1.4;
 }
 .summary-line b { color: var(--text); font-weight: 600; }
 
-.day-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.day-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
 .action-btn {
   font-family: 'Inter', sans-serif;
   font-size: 13px; /* Slightly larger for tap target */

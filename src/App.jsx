@@ -105,8 +105,16 @@ export default function App() {
       {viewMode === "day" && (
         <>
           <div key={selectedDate + "-top"} className={`day-transition slide-${slideDir}`}>
-            <div className="headline-row">
-              <h1 className="headline">{longDate(selectedDate)}</h1>
+            <div className="day-top-stable">
+              <div className="headline-row">
+                <h1 className="headline">{longDate(selectedDate)}</h1>
+              </div>
+              <p className="summary-line">
+                {isEmpty && totalMatches === 0
+                  ? "No matches"
+                  : <><b>{totalMatches}</b> {totalMatches === 1 ? "match" : "matches"} across <b>{activeLeagueCount + (activeUclRounds.length ? 1 : 0)}</b> {(activeLeagueCount + (activeUclRounds.length ? 1 : 0)) === 1 ? "league" : "leagues"}</>
+                }
+              </p>
               {!isEmpty && (
                 <div className="day-actions">
                   <button className="action-btn" onClick={handleCopyDay}>{copied ? "\u2713 Copied" : "\u2398 Copy"}</button>
@@ -114,12 +122,6 @@ export default function App() {
                 </div>
               )}
             </div>
-            <p className="summary-line">
-              {isEmpty && totalMatches === 0
-                ? "No matches"
-                : <><b>{totalMatches}</b> {totalMatches === 1 ? "match" : "matches"} across <b>{activeLeagueCount + (activeUclRounds.length ? 1 : 0)}</b> {(activeLeagueCount + (activeUclRounds.length ? 1 : 0)) === 1 ? "league" : "leagues"}</>
-              }
-            </p>
           </div>
           <DateStrip
             selected={selectedDate}
