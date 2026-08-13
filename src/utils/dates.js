@@ -64,7 +64,6 @@ export function cellLabel(iso, info, leagueFilter = null, RIVALRY_COMP = null) {
   
   const rawIds = info.c || [];
   const dotIds = leagueFilter != null ? rawIds.filter(id => id === leagueFilter) : rawIds;
-  const matchCount = leagueFilter != null ? dotIds.length : info.n; // approximate for filtered, n is total matches
   
   // Actually, we don't have the exact match count for the filtered league, 
   // but if dotIds.length === 0, there are no matches.

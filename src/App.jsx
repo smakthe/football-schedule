@@ -9,7 +9,7 @@ import {
 import { MATCH_DATE_SET } from './data/precomputed.js';
 import { todayISO, clampISO, addMonths, longDate } from './utils/dates.js';
 import { matchToVEvent, buildICS, downloadICS } from './utils/ics.js';
-import { copyText, buildShareText } from './utils/clipboard.js';
+import { buildShareText } from './utils/clipboard.js';
 import { useClipboard } from './hooks/useClipboard.js';
 
 import LeagueFilter from './components/LeagueFilter.jsx';

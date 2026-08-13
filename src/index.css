@@ -302,7 +302,6 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  scroll-behavior: smooth;
   padding: 2px 2px 8px;
   flex: 1;
   scrollbar-width: none;

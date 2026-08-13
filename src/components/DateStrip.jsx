@@ -4,7 +4,7 @@ import { addDays, clampISO, fromISO, cellLabel } from '../utils/dates.js';
 import { RIVALRY_COMP } from '../data/precomputed.js';
 import CalendarDots from './CalendarDots.jsx';
 
-function DateStrip({ selected, onSelect, matchDateSet, dayInfo, leagueFilter }) {
+function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
   const scrollerRef = useRef(null);
   const days = useMemo(() => {
     const arr = [];
@@ -18,9 +18,17 @@ function DateStrip({ selected, onSelect, matchDateSet, dayInfo, leagueFilter }) 
     setFocusIdx(idx === -1 ? 7 : idx);
   }, [days, selected]);
 
-  useEffect(() => {
+  const isInitialMount = useRef(true);
+  React.useLayoutEffect(() => {
     const el = scrollerRef.current?.querySelector(".day-pill.selected");
-    if (el && typeof el.scrollIntoView === "function") el.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    if (el && typeof el.scrollIntoView === "function") {
+      el.scrollIntoView({ 
+        behavior: isInitialMount.current ? "auto" : "smooth", 
+        inline: "center", 
+        block: "nearest" 
+      });
+      isInitialMount.current = false;
+    }
   }, [selected]);
 
   function focusPillAt(idx) {
@@ -51,7 +59,6 @@ function DateStrip({ selected, onSelect, matchDateSet, dayInfo, leagueFilter }) 
         {days.map((iso, i) => {
           const d = fromISO(iso);
           const isSel = iso === selected;
-          const hasMatch = matchDateSet.has(iso);
           const inRange = iso >= MIN_DATE && iso <= MAX_DATE;
           return (
             <button

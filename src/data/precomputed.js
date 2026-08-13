@@ -30,7 +30,7 @@ for (const m of fixtures.bundesliga) {
 }
 
 export const RIVALRY_COMP = {};
-for (const [homeId, awayId, label] of fixtures.rivalries) {
+for (const [homeId, , label] of fixtures.rivalries) {
   RIVALRY_COMP[label] = TEAM_COMP[homeId];
 }
 
