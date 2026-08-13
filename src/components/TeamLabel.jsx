@@ -18,7 +18,7 @@ function TeamLabel({ teamId, size = 32, reverse = false, className = "team-label
   );
 
   return (
-    <span className={className} style={{ display: 'flex', alignItems: 'center', gap: direction === 'col' ? '10px' : '8px', flexDirection: direction === 'col' ? 'column' : 'row' }}>
+    <span className={className} style={{ display: 'flex', alignItems: 'center', gap: direction === 'col' ? '10px' : '8px', flexDirection: direction === 'col' ? 'column' : 'row', minWidth: 0, justifyContent: reverse ? 'flex-start' : 'flex-end' }}>
       {content}
     </span>
   );

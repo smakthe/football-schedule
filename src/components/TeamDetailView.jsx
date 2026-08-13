@@ -32,9 +32,9 @@ function NextFixtureCard({ f, teamId, onPick }) {
       </span>
 
       <div className="nf-matchup">
-        <TeamLabel teamId={homeId} size={38} reverse={true} className="nf-team" />
+        <TeamLabel teamId={homeId} size={38} reverse={true} direction="col" className="nf-team" />
         <span className="nf-vs">vs</span>
-        <TeamLabel teamId={awayId} size={38} reverse={true} className="nf-team" />
+        <TeamLabel teamId={awayId} size={38} reverse={true} direction="col" className="nf-team" />
       </div>
       
       {f.time ? (
