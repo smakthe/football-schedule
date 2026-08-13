@@ -47,20 +47,27 @@ function NextFixtureCard({ f, teamId, onPick }) {
   const comp = fixtures.comps[f.compId];
   const { homeId, awayId } = getMatchTeams(f, teamId);
   return (
-    <button className="next-fixture-card" style={{ "--accent2": getThemeAccent(f.compId) }} onClick={() => onPick(f.date)}>
-      <span className="nf-label">
-        <span className={`venue-badge ${f.isHome ? 'home' : 'away'}`} title={f.isHome ? 'Home' : 'Away'}>{f.isHome ? 'H' : 'A'}</span>
-        Next fixture &middot; {comp.name}{f.round ? ` \u00b7 Matchday ${f.round}` : ""}
+    <button className="next-fixture-card" style={{ "--accent2": getThemeAccent(f.compId), position: 'relative' }} onClick={() => onPick(f.date)}>
+      
+      <span className="nf-label" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
+          <span className={`venue-badge ${f.isHome ? 'home' : 'away'}`} title={f.isHome ? 'Home' : 'Away'} style={{ position: 'absolute', right: '100%', marginRight: '8px' }}>{f.isHome ? 'H' : 'A'}</span>
+          <span>Next fixture &middot; {comp.name}{f.round ? ` \u00b7 Matchday ${f.round}` : ""}</span>
+        </div>
+        <span style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'none', letterSpacing: 'normal', fontFamily: "'Inter', sans-serif" }}>
+          {f.date === f.date2 ? longDate(f.date) : `${shortDate(f.date)} \u2013 ${shortDate(f.date2)}`}
+        </span>
       </span>
+
       <div className="nf-matchup">
         <span className="nf-team"><Crest teamId={homeId} size={38} /><span>{fixtures.teams[homeId]}</span></span>
         <span className="nf-vs">vs</span>
         <span className="nf-team"><Crest teamId={awayId} size={38} /><span>{fixtures.teams[awayId]}</span></span>
       </div>
-      <span className="nf-date">
-        {f.date === f.date2 ? longDate(f.date) : `${shortDate(f.date)} \u2013 ${shortDate(f.date2)}`}
-        {f.time ? <> &middot; <KickoffTime dateISO={f.date} time={f.time} compId={f.compId} /></> : null}
-      </span>
+      
+      {f.time ? (
+        <KickoffTime dateISO={f.date} time={f.time} compId={f.compId} />
+      ) : null}
     </button>
   );
 }

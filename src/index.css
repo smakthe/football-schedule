@@ -616,10 +616,10 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   text-transform: uppercase;
   color: var(--text-dim);
 }
-.nf-matchup { display: flex; align-items: center; gap: 20px; }
-.nf-team { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; max-width: 90px; text-align: center; }
+.nf-matchup { display: grid; grid-template-columns: 110px auto 110px; justify-content: center; align-items: start; gap: 16px; width: 100%; }
+.nf-team { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; text-align: center; }
 .nf-team span { transition: color 0.2s ease; }
-.nf-vs { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--text-faint); }
+.nf-vs { display: flex; align-items: center; justify-content: center; height: 38px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--text-faint); }
 .nf-date { font-size: 13px; color: var(--text-dim); display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; text-align: center; line-height: 1.4; }
 
 .team-fixture-list { display: flex; flex-direction: column; gap: 6px; }
