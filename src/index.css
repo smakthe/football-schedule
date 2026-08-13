@@ -49,6 +49,7 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
+  width: max-content;
 }
 .league-filter-toggle {
   display: flex;

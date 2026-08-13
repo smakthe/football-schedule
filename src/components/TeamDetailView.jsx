@@ -52,7 +52,7 @@ function NextFixtureCard({ f, teamId, onPick }) {
       <span className="nf-label" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
           <span className={`venue-badge ${f.isHome ? 'home' : 'away'}`} title={f.isHome ? 'Home' : 'Away'} style={{ position: 'absolute', right: '100%', marginRight: '8px' }}>{f.isHome ? 'H' : 'A'}</span>
-          <span>Next fixture &middot; {comp.name}{f.round ? ` \u00b7 Matchday ${f.round}` : ""}</span>
+          <span>Next match &middot; {comp.name}{f.round ? ` \u00b7 Matchday ${f.round}` : ""}</span>
         </div>
         <span style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'none', letterSpacing: 'normal', fontFamily: "'Inter', sans-serif" }}>
           {f.date === f.date2 ? longDate(f.date) : `${shortDate(f.date)} \u2013 ${shortDate(f.date2)}`}
@@ -121,7 +121,7 @@ export default function TeamDetailView({ teamId, onBack, onPick, today }) {
           </button>
           {later.length > 0 && (
             <>
-              <div className="team-browse-heading" style={{ marginTop: 22 }}>Remaining schedule &middot; {later.length} {later.length === 1 ? "match" : "matches"}</div>
+              <div className="team-browse-heading" style={{ marginTop: 22 }}>Upcoming &middot; {later.length} {later.length === 1 ? "match" : "matches"}</div>
               <div className="team-fixture-list">
                 {later.map((f, i) => <TeamFixtureRow key={i} f={f} onPick={onPick} />)}
               </div>
