@@ -2,7 +2,6 @@ import React from 'react';
 import fixtures from '../data/fixtures.json';
 import { M_HOME, M_AWAY, M_TIME, M_COMP } from '../data/constants.js';
 import { rivalryLabel } from '../data/precomputed.js';
-import { getThemeAccent } from '../config/leagueThemes.js';
 import { exportSingleMatch } from '../utils/ics.js';
 import { copyText, buildMatchShareText } from '../utils/clipboard.js';
 import { Download, Copy, Check } from 'lucide-react';

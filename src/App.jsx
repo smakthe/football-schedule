@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect, Suspense, lazy } from 'react';
+import { useState, useMemo, useCallback, useEffect, Suspense, lazy } from 'react';
 import fixtures from './data/fixtures.json';
 import { LEAGUE_THEMES, THEME_CSS_VARS } from './config/leagueThemes.js';
 import {

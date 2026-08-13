@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { MO, WD_S, MIN_DATE, MAX_DATE } from '../data/constants.js';
 import { getMonthCells, fromISO, addDays, clampISO, addMonths, cellLabel } from '../utils/dates.js';
 import { RIVALRY_COMP } from '../data/precomputed.js';

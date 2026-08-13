@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import fixtures from '../data/fixtures.json';
 import { DISPLAY_ORDER } from '../data/constants.js';
 import { TEAM_COMP, TEAMS_BY_COMP } from '../data/precomputed.js';

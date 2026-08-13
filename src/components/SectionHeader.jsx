@@ -1,4 +1,3 @@
-import React from 'react';
 import CompBadge from './CompBadge.jsx';
 
 export default function SectionHeader({ comp, subtitle }) {

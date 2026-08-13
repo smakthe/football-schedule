@@ -1,4 +1,3 @@
-import React from 'react';
 import { SOURCE_TZ, COMP_EPL } from '../data/constants.js';
 import { kickoffToLocalDate, formatLocalHM, localDayShift } from '../utils/timezone.js';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { DOT_COLORS } from '../data/precomputed.js';
 
 export default function CalendarDots({ ids }) {
