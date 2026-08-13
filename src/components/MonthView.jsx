@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { MO, WD_S, MIN_DATE, MAX_DATE } from '../data/constants.js';
 import { getMonthCells, fromISO, addDays, clampISO, addMonths, cellLabel } from '../utils/dates.js';
+import { RIVALRY_COMP } from '../data/precomputed.js';
 import CalendarDots from './CalendarDots.jsx';
 
 export default function MonthView({ cursor, onNavigate, selectedDate, today, onPick, dayInfo, leagueFilter }) {
@@ -66,16 +67,20 @@ export default function MonthView({ cursor, onNavigate, selectedDate, today, onP
           if (iso === selectedDate) cls.push("selected");
           if (iso === today) cls.push("today");
           
+          const filteredRiv = (info && info.riv) 
+            ? (leagueFilter != null ? info.riv.filter(r => RIVALRY_COMP[r] === leagueFilter) : info.riv) 
+            : [];
+          
           return (
             <button
               key={iso} data-iso={iso} role="gridcell" className={cls.join(" ")} disabled={!inRange}
               tabIndex={iso === focusedISO ? 0 : -1}
-              aria-label={cellLabel(iso, info)}
+              aria-label={cellLabel(iso, info, leagueFilter, RIVALRY_COMP)}
               aria-current={iso === today ? "date" : undefined}
               aria-selected={iso === selectedDate}
               onClick={() => { setFocusedISO(iso); onPick(iso); }}
             >
-              {info && info.riv.length > 0 && <span className="cal-star" aria-hidden="true">&#9733;</span>}
+              {filteredRiv.length > 0 && <span className="cal-star" aria-hidden="true">&#9733;</span>}
               <span className="month-daynum" aria-hidden="true">{fromISO(iso).getDate()}</span>
               <CalendarDots ids={leagueFilter != null ? (info ? info.c : []).filter(id => id === leagueFilter) : (info ? info.c : [])} />
             </button>

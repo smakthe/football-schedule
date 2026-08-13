@@ -58,10 +58,29 @@ export function shortDate(iso) {
   return `${Number(d)} ${MO[Number(m) - 1].slice(0, 3)}`;
 }
 
-export function cellLabel(iso, info) {
+export function cellLabel(iso, info, leagueFilter = null, RIVALRY_COMP = null) {
   const base = longDate(iso);
   if (!info) return `${base}, no matches`;
-  const parts = [`${info.n} ${info.n === 1 ? "match" : "matches"}`];
-  if (info.riv.length) parts.push(info.riv.join(", "));
+  
+  const rawIds = info.c || [];
+  const dotIds = leagueFilter != null ? rawIds.filter(id => id === leagueFilter) : rawIds;
+  const matchCount = leagueFilter != null ? dotIds.length : info.n; // approximate for filtered, n is total matches
+  
+  // Actually, we don't have the exact match count for the filtered league, 
+  // but if dotIds.length === 0, there are no matches.
+  if (leagueFilter != null && dotIds.length === 0) return `${base}, no matches`;
+
+  const parts = [];
+  if (leagueFilter == null) {
+    parts.push(`${info.n} ${info.n === 1 ? "match" : "matches"}`);
+  } else {
+    parts.push(`Matches available`);
+  }
+
+  const filteredRiv = (info.riv && leagueFilter != null && RIVALRY_COMP != null) 
+    ? info.riv.filter(r => RIVALRY_COMP[r] === leagueFilter) 
+    : (info.riv || []);
+
+  if (filteredRiv.length) parts.push(filteredRiv.join(", "));
   return `${base}, ${parts.join(", ")}`;
 }

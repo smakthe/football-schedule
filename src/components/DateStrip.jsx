@@ -1,6 +1,7 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { MIN_DATE, MAX_DATE, WD_S } from '../data/constants.js';
 import { addDays, clampISO, fromISO, cellLabel } from '../utils/dates.js';
+import { RIVALRY_COMP } from '../data/precomputed.js';
 import CalendarDots from './CalendarDots.jsx';
 
 export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo, leagueFilter }) {
@@ -59,7 +60,7 @@ export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo, l
               disabled={!inRange}
               tabIndex={i === focusIdx ? 0 : -1}
               aria-current={isSel ? "date" : undefined}
-              aria-label={cellLabel(iso, dayInfo[iso])}
+              aria-label={cellLabel(iso, dayInfo[iso], leagueFilter, RIVALRY_COMP)}
               onClick={() => { setFocusIdx(i); onSelect(iso); }}
             >
               <span className="day-wd" aria-hidden="true">{WD_S[d.getDay()]}</span>

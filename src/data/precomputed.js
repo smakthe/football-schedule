@@ -29,6 +29,11 @@ for (const m of fixtures.bundesliga) {
   TEAM_COMP[m[3]] = 3;
 }
 
+export const RIVALRY_COMP = {};
+for (const [homeId, awayId, label] of fixtures.rivalries) {
+  RIVALRY_COMP[label] = TEAM_COMP[homeId];
+}
+
 for (let i = 0; i < fixtures.teams.length; i++) {
   const compId = TEAM_COMP[i];
   if (compId !== undefined && TEAMS_BY_COMP[compId]) {
