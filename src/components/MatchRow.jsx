@@ -3,15 +3,16 @@ import fixtures from '../data/fixtures.json';
 import { M_HOME, M_AWAY, M_TIME, M_COMP } from '../data/constants.js';
 import { rivalryLabel } from '../data/precomputed.js';
 import { exportSingleMatch } from '../utils/ics.js';
-import { copyText, buildMatchShareText } from '../utils/clipboard.js';
+import { buildMatchShareText } from '../utils/clipboard.js';
+import { useClipboard } from '../hooks/useClipboard.js';
 import { Download, Copy, Check } from 'lucide-react';
-import Crest from './Crest.jsx';
+import TeamLabel from './TeamLabel.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
 
 function MatchRow({ m, date, onTeamSelect, highlightTeamId }) {
   const homeId = m[M_HOME], awayId = m[M_AWAY], time = m[M_TIME], compId = m[M_COMP];
   const riv = rivalryLabel(homeId, awayId);
-  const [copied, setCopied] = React.useState(false);
+  const { copied, copy: copyMatch } = useClipboard();
   const rowRef = React.useRef(null);
 
   const isHighlighted = highlightTeamId && (homeId === highlightTeamId || awayId === highlightTeamId);
@@ -32,21 +33,15 @@ function MatchRow({ m, date, onTeamSelect, highlightTeamId }) {
     exportSingleMatch(m, date);
   }
 
-  async function handleCopyMatch(e) {
+  function handleCopyMatch(e) {
     e.stopPropagation();
-    const text = buildMatchShareText(m, date);
-    const ok = await copyText(text);
-    if (ok) {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    }
+    copyMatch(buildMatchShareText(m, date));
   }
   
   return (
     <div ref={rowRef} className={"match-row" + (riv ? " rivalry" : "")}>
       <button className="team home" onClick={() => onTeamSelect(homeId)}>
-        <span className="team-name">{fixtures.teams[homeId]}</span>
-        <Crest teamId={homeId} size={32} />
+        <TeamLabel teamId={homeId} size={32} />
       </button>
       <div className="kickoff">
         {riv && <span className="rivalry-tag">&#9733; {riv}</span>}
@@ -61,8 +56,7 @@ function MatchRow({ m, date, onTeamSelect, highlightTeamId }) {
         </div>
       </div>
       <button className="team away" onClick={() => onTeamSelect(awayId)}>
-        <Crest teamId={awayId} size={32} />
-        <span className="team-name">{fixtures.teams[awayId]}</span>
+        <TeamLabel teamId={awayId} size={32} reverse={true} />
       </button>
     </div>
   );

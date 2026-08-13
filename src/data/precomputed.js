@@ -46,3 +46,23 @@ for (const comp of fixtures.comps) {
   DOT_COLORS[comp.id] = comp.color;
 }
 DOT_COLORS[4] = fixtures.ucl.color;
+
+// Precompute team fixtures (O(1) lookup vs O(N) scan on render)
+export const TEAM_FIXTURES = new Array(fixtures.teams.length).fill(null).map(() => []);
+
+for (const [iso, matches] of Object.entries(fixtures.dateIndex)) {
+  for (const m of matches) {
+    const compId = m[0], home = m[1], away = m[2], time = m[3], round = m[4];
+    TEAM_FIXTURES[home].push({ date: iso, date2: iso, compId, isHome: true, oppId: away, time, round });
+    TEAM_FIXTURES[away].push({ date: iso, date2: iso, compId, isHome: false, oppId: home, time, round });
+  }
+}
+
+for (const [start, end, home, away, round] of fixtures.bundesliga) {
+  TEAM_FIXTURES[home].push({ date: start, date2: end, compId: 3, isHome: true, oppId: away, time: null, round });
+  TEAM_FIXTURES[away].push({ date: start, date2: end, compId: 3, isHome: false, oppId: home, time: null, round });
+}
+
+for (let i = 0; i < TEAM_FIXTURES.length; i++) {
+  TEAM_FIXTURES[i].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+}

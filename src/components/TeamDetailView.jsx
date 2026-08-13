@@ -1,42 +1,14 @@
-import { useMemo, useEffect } from 'react';
+import { useEffect } from 'react';
 import fixtures from '../data/fixtures.json';
-import { M_HOME, M_AWAY, M_COMP, M_TIME, M_ROUND, COMP_BUNDESLIGA } from '../data/constants.js';
-import { TEAM_COMP } from '../data/precomputed.js';
-import { shortDate, longDate, fromISO } from '../utils/dates.js';
+import { TEAM_COMP, TEAM_FIXTURES } from '../data/precomputed.js';
+import { shortDate, longDate } from '../utils/dates.js';
 import { exportTeamSchedule } from '../utils/ics.js';
 import { Download } from 'lucide-react';
 import Crest from './Crest.jsx';
+import TeamLabel from './TeamLabel.jsx';
+import VenueBadge from './VenueBadge.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
 import { getThemeAccent } from '../config/leagueThemes.js';
-
-function useTeamFixtures(teamId) {
-  return useMemo(() => {
-    if (teamId == null) return [];
-    const list = [];
-    for (const [iso, matches] of Object.entries(fixtures.dateIndex)) {
-      for (const m of matches) {
-        if (m[M_HOME] === teamId || m[M_AWAY] === teamId) {
-          const isHome = m[M_HOME] === teamId;
-          list.push({ 
-            date: iso, date2: iso, compId: m[M_COMP], isHome, 
-            oppId: isHome ? m[M_AWAY] : m[M_HOME], time: m[M_TIME], round: m[M_ROUND] 
-          });
-        }
-      }
-    }
-    for (const [start, end, home, away, sp] of fixtures.bundesliga) {
-      if (home === teamId || away === teamId) {
-        const isHome = home === teamId;
-        list.push({ 
-          date: start, date2: end, compId: COMP_BUNDESLIGA, isHome, 
-          oppId: isHome ? away : home, time: null, round: sp 
-        });
-      }
-    }
-    list.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
-    return list;
-  }, [teamId]);
-}
 
 const getMatchTeams = (f, teamId) => ({
   homeId: f.isHome ? teamId : f.oppId,
@@ -51,7 +23,7 @@ function NextFixtureCard({ f, teamId, onPick }) {
       
       <span className="nf-label" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
-          <span className={`venue-badge ${f.isHome ? 'home' : 'away'}`} title={f.isHome ? 'Home' : 'Away'} style={{ position: 'absolute', right: '100%', marginRight: '8px' }}>{f.isHome ? 'H' : 'A'}</span>
+          <VenueBadge isHome={f.isHome} style={{ position: 'absolute', right: '100%', marginRight: '8px' }} />
           <span>Next match &middot; {comp.name}{f.round ? ` \u00b7 Matchday ${f.round}` : ""}</span>
         </div>
         <span style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'none', letterSpacing: 'normal', fontFamily: "'Inter', sans-serif" }}>
@@ -60,9 +32,9 @@ function NextFixtureCard({ f, teamId, onPick }) {
       </span>
 
       <div className="nf-matchup">
-        <span className="nf-team"><Crest teamId={homeId} size={38} /><span>{fixtures.teams[homeId]}</span></span>
+        <TeamLabel teamId={homeId} size={38} reverse={true} className="nf-team" />
         <span className="nf-vs">vs</span>
-        <span className="nf-team"><Crest teamId={awayId} size={38} /><span>{fixtures.teams[awayId]}</span></span>
+        <TeamLabel teamId={awayId} size={38} reverse={true} className="nf-team" />
       </div>
       
       {f.time ? (
@@ -78,10 +50,9 @@ function TeamFixtureRow({ f, onPick }) {
     <button className="team-fixture-card" onClick={() => onPick(f.date)} style={{ "--hover-color": comp.color2 }}>
       <div className="tf-card-header">
         <span className="tf-date">{shortDate(f.date)}</span>
-        <span className={`venue-badge ${f.isHome ? 'home' : 'away'}`} title={f.isHome ? 'Home' : 'Away'}>{f.isHome ? 'H' : 'A'}</span>
+        <VenueBadge isHome={f.isHome} />
       </div>
-      <Crest teamId={f.oppId} size={36} />
-      <span className="tf-opp-name">{fixtures.teams[f.oppId]}</span>
+      <TeamLabel teamId={f.oppId} size={36} reverse={true} direction="col" className="" />
     </button>
   );
 }
@@ -91,7 +62,7 @@ export default function TeamDetailView({ teamId, onBack, onPick, today }) {
     window.scrollTo(0, 0);
   }, []);
 
-  const teamFixtures = useTeamFixtures(teamId);
+  const teamFixtures = TEAM_FIXTURES[teamId] || [];
   const upcoming = teamFixtures.filter((f) => f.date2 >= today);
   const next = upcoming[0];
   const later = upcoming.slice(1);

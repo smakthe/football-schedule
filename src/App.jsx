@@ -10,6 +10,7 @@ import { MATCH_DATE_SET } from './data/precomputed.js';
 import { todayISO, clampISO, addMonths, longDate } from './utils/dates.js';
 import { matchToVEvent, buildICS, downloadICS } from './utils/ics.js';
 import { copyText, buildShareText } from './utils/clipboard.js';
+import { useClipboard } from './hooks/useClipboard.js';
 
 import LeagueFilter from './components/LeagueFilter.jsx';
 import ViewToggle from './components/ViewToggle.jsx';
@@ -103,7 +104,7 @@ export default function App() {
   const filteredUclRounds = showUcl ? activeUclRounds : [];
   const isEmpty = totalMatches === 0 && filteredUclRounds.length === 0;
 
-  const [copied, setCopied] = useState(false);
+  const { copied, copy: copyDay } = useClipboard();
 
   function exportDay() {
     const vevents = [];
@@ -118,9 +119,8 @@ export default function App() {
     downloadICS(`football-${selectedDate}.ics`, buildICS(vevents));
   }
 
-  async function handleCopyDay() {
-    const ok = await copyText(buildShareText(selectedDate, matchesByComp));
-    if (ok) { setCopied(true); setTimeout(() => setCopied(false), 1800); }
+  function handleCopyDay() {
+    copyDay(buildShareText(selectedDate, matchesByComp));
   }
 
   return (
