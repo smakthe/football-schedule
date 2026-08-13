@@ -14,6 +14,7 @@ import { copyText, buildShareText } from './utils/clipboard.js';
 import LeagueFilter from './components/LeagueFilter.jsx';
 import ViewToggle from './components/ViewToggle.jsx';
 import DateStrip from './components/DateStrip.jsx';
+import { Copy, Download, Check } from 'lucide-react';
 import LeagueSection from './components/LeagueSection.jsx';
 import UCLSection from './components/UCLSection.jsx';
 import EmptyState from './components/EmptyState.jsx';
@@ -134,19 +135,25 @@ export default function App() {
         <>
           <div key={selectedDate + "-top"} className={`day-transition slide-${slideDir}`}>
             <div className="day-top-stable">
-              <div className="headline-row">
-                <h1 className="headline">{longDate(selectedDate)}</h1>
+              <div>
+                <div className="headline-row">
+                  <h1 className="headline">{longDate(selectedDate)}</h1>
+                </div>
+                <p className="summary-line">
+                  {isEmpty && totalMatches === 0
+                    ? "No matches"
+                    : <><b>{totalMatches}</b> {totalMatches === 1 ? "match" : "matches"} across <b>{activeLeagueCount + (filteredUclRounds.length ? 1 : 0)}</b> {(activeLeagueCount + (filteredUclRounds.length ? 1 : 0)) === 1 ? "league" : "leagues"}</>
+                  }
+                </p>
               </div>
-              <p className="summary-line">
-                {isEmpty && totalMatches === 0
-                  ? "No matches"
-                  : <><b>{totalMatches}</b> {totalMatches === 1 ? "match" : "matches"} across <b>{activeLeagueCount + (filteredUclRounds.length ? 1 : 0)}</b> {(activeLeagueCount + (filteredUclRounds.length ? 1 : 0)) === 1 ? "league" : "leagues"}</>
-                }
-              </p>
               {!isEmpty && (
                 <div className="day-actions">
-                  <button className="action-btn" onClick={handleCopyDay}>{copied ? "\u2713 Copied" : "\u2398 Copy"}</button>
-                  <button className="action-btn" onClick={exportDay}>&#128197; Export</button>
+                  <button className="action-btn" onClick={handleCopyDay} aria-label="Copy to clipboard" title="Copy">
+                    {copied ? <Check size={15} /> : <Copy size={15} />}
+                  </button>
+                  <button className="action-btn" onClick={exportDay} aria-label="Export schedule" title="Export">
+                    <Download size={15} />
+                  </button>
                 </div>
               )}
             </div>

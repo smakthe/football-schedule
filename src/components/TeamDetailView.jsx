@@ -4,6 +4,7 @@ import { M_HOME, M_AWAY, M_COMP, M_TIME, M_ROUND, COMP_BUNDESLIGA } from '../dat
 import { TEAM_COMP } from '../data/precomputed.js';
 import { shortDate, longDate, fromISO } from '../utils/dates.js';
 import { exportTeamSchedule } from '../utils/ics.js';
+import { Download } from 'lucide-react';
 import Crest from './Crest.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
 import { getThemeAccent } from '../config/leagueThemes.js';
@@ -109,7 +110,7 @@ export default function TeamDetailView({ teamId, onBack, onPick, today }) {
         <>
           <NextFixtureCard f={next} teamId={teamId} onPick={onPick} />
           <button className="action-btn" style={{ marginTop: 16, width: '100%', justifyContent: 'center' }} onClick={exportSeason}>
-            &#128197; Export full schedule ({upcoming.length} matches)
+            <Download size={15} /> Export to calendar ({upcoming.length} {upcoming.length === 1 ? "match" : "matches"})
           </button>
           {later.length > 0 && (
             <>
