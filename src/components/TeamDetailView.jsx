@@ -75,14 +75,13 @@ function NextFixtureCard({ f, teamId, onPick }) {
 function TeamFixtureRow({ f, onPick }) {
   const comp = fixtures.comps[f.compId];
   return (
-    <button className="team-fixture-row" onClick={() => onPick(f.date)}>
-      <span className="tf-date">{f.date === f.date2 ? shortDate(f.date) : `${shortDate(f.date)}\u2013${fromISO(f.date2).getDate()}`}</span>
-      <span className="tf-opp">
+    <button className="team-fixture-card" onClick={() => onPick(f.date)} style={{ "--hover-color": comp.color2 }}>
+      <div className="tf-card-header">
+        <span className="tf-date">{shortDate(f.date)}</span>
         <span className={`venue-badge ${f.isHome ? 'home' : 'away'}`} title={f.isHome ? 'Home' : 'Away'}>{f.isHome ? 'H' : 'A'}</span>
-        <Crest teamId={f.oppId} size={22} />
-        <span>vs {fixtures.teams[f.oppId]}</span>
-      </span>
-      <span className="tf-meta" style={{ color: getThemeAccent(f.compId) }}>{comp.short}</span>
+      </div>
+      <Crest teamId={f.oppId} size={36} />
+      <span className="tf-opp-name">{fixtures.teams[f.oppId]}</span>
     </button>
   );
 }

@@ -3,7 +3,7 @@ import { M_ROUND } from '../data/constants.js';
 import MatchRow from './MatchRow.jsx';
 import SectionHeader from './SectionHeader.jsx';
 
-function LeagueSection({ comp, matches, date, onTeamSelect }) {
+function LeagueSection({ comp, matches, date, onTeamSelect, highlightTeamId }) {
   if (!matches.length) return null;
   const round = matches[0][M_ROUND];
   
@@ -14,7 +14,7 @@ function LeagueSection({ comp, matches, date, onTeamSelect }) {
         subtitle={`${round ? `Matchday ${round} \u00b7 ` : ""}${matches.length} ${matches.length === 1 ? "match" : "matches"}`} 
       />
       <div className="match-list">
-        {matches.map((m, i) => <MatchRow key={i} m={m} date={date} onTeamSelect={onTeamSelect} />)}
+        {matches.map((m, i) => <MatchRow key={i} m={m} date={date} onTeamSelect={onTeamSelect} highlightTeamId={highlightTeamId} />)}
       </div>
     </section>
   );

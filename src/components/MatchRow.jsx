@@ -8,11 +8,25 @@ import { Download, Copy, Check } from 'lucide-react';
 import Crest from './Crest.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
 
-function MatchRow({ m, date, onTeamSelect }) {
+function MatchRow({ m, date, onTeamSelect, highlightTeamId }) {
   const homeId = m[M_HOME], awayId = m[M_AWAY], time = m[M_TIME], compId = m[M_COMP];
   const riv = rivalryLabel(homeId, awayId);
   const [copied, setCopied] = React.useState(false);
-  
+  const rowRef = React.useRef(null);
+
+  const isHighlighted = highlightTeamId && (homeId === highlightTeamId || awayId === highlightTeamId);
+
+  React.useEffect(() => {
+    if (isHighlighted && rowRef.current) {
+      rowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      rowRef.current.classList.add('highlight-pulse');
+      const t = setTimeout(() => {
+        if (rowRef.current) rowRef.current.classList.remove('highlight-pulse');
+      }, 2500);
+      return () => clearTimeout(t);
+    }
+  }, [isHighlighted, date]);
+
   function exportMatch(e) {
     e.stopPropagation();
     exportSingleMatch(m, date);
@@ -29,7 +43,7 @@ function MatchRow({ m, date, onTeamSelect }) {
   }
   
   return (
-    <div className={"match-row" + (riv ? " rivalry" : "")}>
+    <div ref={rowRef} className={"match-row" + (riv ? " rivalry" : "")}>
       <button className="team home" onClick={() => onTeamSelect(homeId)}>
         <span className="team-name">{fixtures.teams[homeId]}</span>
         <Crest teamId={homeId} size={32} />

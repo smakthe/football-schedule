@@ -439,6 +439,13 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .match-row:last-child { border-bottom: none; }
 .match-row:hover { background: var(--surface-2); }
 .match-row.rivalry { background: linear-gradient(180deg, rgba(224,184,74,0.08), transparent 70%); }
+.match-row.highlight-pulse {
+  animation: match-pulse 2.5s ease-out;
+}
+@keyframes match-pulse {
+  0% { background-color: rgba(95, 224, 165, 0.25); box-shadow: inset 0 0 0 1px rgba(95, 224, 165, 0.5); }
+  100% { background-color: transparent; box-shadow: inset 0 0 0 1px transparent; }
+}
 
 .team { 
   display: flex; align-items: center; gap: 9px; min-width: 0; 
@@ -564,24 +571,43 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   color: var(--text-dim);
   margin-bottom: 10px;
 }
-.team-result-list { display: flex; flex-direction: column; gap: 4px; }
+.team-result-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 12px; }
 .team-result {
-  display: flex; align-items: center; gap: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
   width: 100%;
-  background: var(--surface);
+  aspect-ratio: 1 / 1.05;
+  background: linear-gradient(145deg, var(--surface), var(--surface-2));
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 14px; /* Increased padding */
-  margin-bottom: 4px;
+  border-radius: 16px;
+  padding: 12px 8px;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
   color: var(--text);
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
 }
-.team-result:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
-.team-result:active { transform: scale(0.98); }
-.team-result-name { flex: 1; font-size: 14px; font-weight: 500; transition: color 0.2s ease; }
-.team-result:hover .team-result-name { color: #5FE0A5; }
+.team-result::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% 0%, var(--hover-color, #ffffff), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.team-result > * { z-index: 1; position: relative; }
+.team-result:hover { 
+  transform: translateY(-4px); 
+  border-color: var(--hover-color, rgba(255,255,255,0.3)); 
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.team-result:hover::before { opacity: 0.15; }
+.team-result:active { transform: translateY(0) scale(0.96); }
+.team-result-name { font-size: 12px; font-weight: 500; transition: color 0.2s ease; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25; }
+.team-result:hover .team-result-name { color: var(--hover-color, #ffffff); }
 .team-result:hover .crest { transform: scale(1.15) rotate(-3deg); }
 .team-result-comp { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
 
@@ -623,28 +649,46 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
 .nf-vs { display: flex; align-items: center; justify-content: center; height: 38px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--text-faint); }
 .nf-date { font-size: 13px; color: var(--text-dim); display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; text-align: center; line-height: 1.4; }
 
-.team-fixture-list { display: flex; flex-direction: column; gap: 6px; }
-.team-fixture-row {
-  display: grid;
-  grid-template-columns: 68px 1fr auto; /* Tweaked column sizing */
-  align-items: center;
-  gap: 12px;
-  background: var(--surface);
+.team-fixture-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+.team-fixture-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 10px;
+  width: 100%;
+  background: linear-gradient(145deg, var(--surface), var(--surface-2));
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px;
+  border-radius: 16px;
+  padding: 10px 10px 14px;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
   color: var(--text);
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  position: relative;
+  overflow: hidden;
 }
-.team-fixture-row:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
-.team-fixture-row:active { transform: scale(0.98); }
-.team-fixture-row:hover .crest { transform: scale(1.15) rotate(-3deg); }
-.team-fixture-row:hover .tf-opp { color: #5FE0A5; }
-.tf-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); }
-.tf-opp { display: flex; align-items: center; gap: 10px; font-size: 14px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color 0.2s ease; }
-.tf-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; }
+.team-fixture-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 50% 0%, var(--hover-color, #ffffff), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.team-fixture-card > * { z-index: 1; position: relative; }
+.team-fixture-card:hover { 
+  transform: translateY(-4px); 
+  border-color: var(--hover-color, rgba(255,255,255,0.3)); 
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.team-fixture-card:hover::before { opacity: 0.15; }
+.team-fixture-card:active { transform: translateY(0) scale(0.96); }
+
+.tf-card-header { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.tf-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); }
+.tf-opp-name { font-size: 12px; font-weight: 500; transition: color 0.2s ease; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25; }
+.team-fixture-card:hover .tf-opp-name { color: var(--hover-color, #ffffff); }
+.team-fixture-card:hover .crest { transform: scale(1.15) rotate(-3deg); }
 
 .venue-badge {
   display: inline-flex;

@@ -172,7 +172,7 @@ export default function App() {
             ) : (
               <>
                 {filteredOrder.map((id) => (
-                  <LeagueSection key={id} comp={fixtures.comps[id]} matches={matchesByComp[id]} date={selectedDate} onTeamSelect={viewTeamSchedule} />
+                  <LeagueSection key={id} comp={fixtures.comps[id]} matches={matchesByComp[id]} date={selectedDate} onTeamSelect={viewTeamSchedule} highlightTeamId={selectedTeamId} />
                 ))}
                 {showUcl && <UCLSection rounds={activeUclRounds} />}
               </>

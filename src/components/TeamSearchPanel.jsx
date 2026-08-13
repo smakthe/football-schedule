@@ -10,10 +10,9 @@ function TeamResultRow({ id, onPick }) {
   const compId = TEAM_COMP[id];
   const comp = fixtures.comps[compId];
   return (
-    <button className="team-result" onClick={() => onPick(id)}>
-      <Crest teamId={id} size={28} />
+    <button className="team-result" onClick={() => onPick(id)} style={{ "--hover-color": comp.color2 }}>
+      <Crest teamId={id} size={42} />
       <span className="team-result-name">{fixtures.teams[id]}</span>
-      <span className="team-result-comp" style={{ color: comp.color2 }}>{comp.short}</span>
     </button>
   );
 }
