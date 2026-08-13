@@ -148,10 +148,10 @@ export default function App() {
               </div>
               {!isEmpty && (
                 <div className="day-actions">
-                  <button className="action-btn" onClick={handleCopyDay} aria-label="Copy to clipboard" title="Copy">
+                  <button className="action-btn" onClick={handleCopyDay} aria-label="Copy to clipboard" title="Copy day">
                     {copied ? <Check size={15} /> : <Copy size={15} />}
                   </button>
-                  <button className="action-btn" onClick={exportDay} aria-label="Export schedule" title="Export">
+                  <button className="action-btn" onClick={exportDay} aria-label="Export schedule" title="Export day">
                     <Download size={15} />
                   </button>
                 </div>

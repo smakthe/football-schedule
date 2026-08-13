@@ -1,6 +1,14 @@
 import fixtures from '../data/fixtures.json';
-import { DISPLAY_ORDER, M_HOME, M_AWAY, M_TIME } from '../data/constants.js';
+import { DISPLAY_ORDER, M_HOME, M_AWAY, M_TIME, M_COMP, SOURCE_TZ, COMP_EPL } from '../data/constants.js';
 import { longDate } from './dates.js';
+import { kickoffToLocalDate } from './timezone.js';
+
+function getISTTime(dateISO, time, compId) {
+  if (!time) return "";
+  const src = SOURCE_TZ[compId] || SOURCE_TZ[COMP_EPL];
+  const localDate = kickoffToLocalDate(src.zone, dateISO, time);
+  return localDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' });
+}
 
 export async function copyText(text) {
   try {
@@ -24,17 +32,25 @@ export async function copyText(text) {
 export function buildShareText(selectedDate, matchesByComp) {
   const lines = [`\u26bd ${longDate(selectedDate)}`, ""];
   let any = false;
-  DISPLAY_ORDER.forEach((id) => {
+  
+  const order = [...DISPLAY_ORDER];
+  if (matchesByComp['ucl'] && matchesByComp['ucl'].length > 0) {
+    order.unshift('ucl');
+  }
+
+  order.forEach((id) => {
     const matches = matchesByComp[id];
-    if (!matches.length) return;
+    if (!matches || !matches.length) return;
     any = true;
-    lines.push(fixtures.comps[id].name.toUpperCase());
+    const compName = id === 'ucl' ? "CHAMPIONS LEAGUE" : fixtures.comps[id].name.toUpperCase();
+    lines.push(compName);
     matches.forEach((m) => {
       const home = fixtures.teams[m[M_HOME]], away = fixtures.teams[m[M_AWAY]], time = m[M_TIME];
-      lines.push(`${home} vs ${away}${time ? " \u2014 " + time + " UK" : ""}`);
+      const istTime = getISTTime(selectedDate, time, id);
+      lines.push(`${home} vs ${away}${time ? " \u2014 " + time + " UK (" + istTime + " IST)" : ""}`);
     });
     lines.push("");
   });
-  if (!any) lines.push("No matches from these five competitions today.");
+  if (!any) lines.push("No matches today.");
   return lines.join("\n").trim();
 }

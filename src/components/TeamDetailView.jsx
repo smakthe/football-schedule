@@ -110,7 +110,7 @@ export default function TeamDetailView({ teamId, onBack, onPick, today }) {
         <>
           <NextFixtureCard f={next} teamId={teamId} onPick={onPick} />
           <button className="action-btn" style={{ marginTop: 16, width: '100%', justifyContent: 'center' }} onClick={exportSeason}>
-            <Download size={15} /> Export to calendar ({upcoming.length} {upcoming.length === 1 ? "match" : "matches"})
+            <Download size={15} /> Export full schedule ({upcoming.length} {upcoming.length === 1 ? "match" : "matches"})
           </button>
           {later.length > 0 && (
             <>
