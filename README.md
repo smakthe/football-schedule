@@ -45,21 +45,27 @@ Make sure you have [Node.js](https://nodejs.org/) (v18 or newer recommended) and
 ### Running the Development Server
 
 Start the Vite development server:
+
 ```bash
 npm run dev
 ```
+
 Open the provided `localhost` link in your browser to view the app. The server supports hot module replacement (HMR), so any changes you make to the code will instantly reflect in the browser.
 
 ## 📦 Building for Production
 
 To create a production-ready build, run:
+
 ```bash
 npm run build
 ```
+
 This will generate highly-optimized static files in the `dist/` directory. You can preview the production build locally by running:
+
 ```bash
 npm run preview
 ```
+
 The `dist/` folder can be deployed to any static hosting service like Vercel, Netlify, or GitHub Pages.
 
 ## 🤝 Contributing
