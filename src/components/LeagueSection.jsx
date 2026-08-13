@@ -3,7 +3,7 @@ import { M_ROUND } from '../data/constants.js';
 import MatchRow from './MatchRow.jsx';
 import SectionHeader from './SectionHeader.jsx';
 
-export default function LeagueSection({ comp, matches, date, onTeamSelect }) {
+function LeagueSection({ comp, matches, date, onTeamSelect }) {
   if (!matches.length) return null;
   const round = matches[0][M_ROUND];
   
@@ -19,3 +19,5 @@ export default function LeagueSection({ comp, matches, date, onTeamSelect }) {
     </section>
   );
 }
+
+export default React.memo(LeagueSection);

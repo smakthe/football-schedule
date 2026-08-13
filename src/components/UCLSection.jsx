@@ -2,7 +2,7 @@ import React from 'react';
 import fixtures from '../data/fixtures.json';
 import SectionHeader from './SectionHeader.jsx';
 
-export default function UCLSection({ rounds }) {
+function UCLSection({ rounds }) {
   if (!rounds.length) return null;
   const comp = fixtures.ucl;
   
@@ -23,3 +23,5 @@ export default function UCLSection({ rounds }) {
     </section>
   );
 }
+
+export default React.memo(UCLSection);

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, Suspense, lazy } from 'react';
 import fixtures from './data/fixtures.json';
 import { LEAGUE_THEMES, THEME_CSS_VARS } from './config/leagueThemes.js';
 import {
@@ -52,28 +52,29 @@ export default function App() {
     setSelectedTeamId(null);
   }, [leagueFilter]);
 
-  function openView(mode) {
+  const openView = useCallback((mode) => {
     if (mode !== "day") setCalendarCursor(selectedDate);
     setViewMode(mode);
-  }
-  function pickDay(iso) {
+  }, [selectedDate]);
+
+  const pickDay = useCallback((iso) => {
     if (iso < MIN_DATE || iso > MAX_DATE) return;
     if (iso > selectedDate) setSlideDir("right");
     else if (iso < selectedDate) setSlideDir("left");
     setSelectedDate(iso);
     setViewMode("day");
-  }
+  }, [selectedDate]);
 
-  function handleDateSelect(iso) {
+  const handleDateSelect = useCallback((iso) => {
     if (iso > selectedDate) setSlideDir("right");
     else if (iso < selectedDate) setSlideDir("left");
     setSelectedDate(iso);
-  }
+  }, [selectedDate]);
 
-  function viewTeamSchedule(teamId) {
+  const viewTeamSchedule = useCallback((teamId) => {
     setSelectedTeamId(teamId);
     openView("team");
-  }  // O(matches that day) instead of O(all 1,372 fixtures): a direct dateIndex
+  }, [openView]);  // O(matches that day) instead of O(all 1,372 fixtures): a direct dateIndex
   // lookup for the three single-day leagues, plus a scan of just Bundesliga's
   // 306 rows (the only competition stored as date ranges).
   const matchesByComp = useMemo(() => {

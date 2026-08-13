@@ -4,10 +4,7 @@ import { M_HOME, M_AWAY, M_TIME, M_COMP } from '../data/constants.js';
 import { rivalryLabel } from '../data/precomputed.js';
 import { getThemeAccent } from '../config/leagueThemes.js';
 import { exportSingleMatch } from '../utils/ics.js';
-import { copyText } from '../utils/clipboard.js';
-import { kickoffToLocalDate } from '../utils/timezone.js';
-import { longDate } from '../utils/dates.js';
-import { SOURCE_TZ, COMP_EPL } from '../data/constants.js';
+import { copyText, buildMatchShareText } from '../utils/clipboard.js';
 import { Download, Copy, Check } from 'lucide-react';
 import Crest from './Crest.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
@@ -24,19 +21,7 @@ function MatchRow({ m, date, onTeamSelect }) {
 
   async function handleCopyMatch(e) {
     e.stopPropagation();
-    const home = fixtures.teams[homeId], away = fixtures.teams[awayId];
-    let compName = "";
-    if (compId === 'ucl') compName = "Champions League";
-    else if (compId !== null) compName = fixtures.comps[compId].name;
-
-    let istTimeStr = "";
-    if (time) {
-      const src = SOURCE_TZ[compId] || SOURCE_TZ[COMP_EPL];
-      const localDate = kickoffToLocalDate(src.zone, date, time);
-      istTimeStr = localDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' });
-    }
-
-    const text = `\u26bd ${home} vs ${away}\n${compName ? compName + "\n" : ""}${longDate(date)}${time ? " \u2014 " + time + " UK (" + istTimeStr + " IST)" : ""}`;
+    const text = buildMatchShareText(m, date);
     const ok = await copyText(text);
     if (ok) {
       setCopied(true);

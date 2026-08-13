@@ -10,6 +10,16 @@ function getISTTime(dateISO, time, compId) {
   return localDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' });
 }
 
+export function buildMatchShareText(m, date) {
+  const home = fixtures.teams[m[M_HOME]], away = fixtures.teams[m[M_AWAY]], time = m[M_TIME], compId = m[M_COMP];
+  let compName = "";
+  if (compId === 'ucl') compName = "Champions League";
+  else if (compId !== null) compName = fixtures.comps[compId].name;
+
+  const istTime = getISTTime(date, time, compId);
+  return `\u26bd ${home} vs ${away}\n${compName ? compName + "\n" : ""}${longDate(date)}${time ? " \u2014 " + time + " UK (" + istTime + " IST)" : ""}`;
+}
+
 export async function copyText(text) {
   try {
     await navigator.clipboard.writeText(text);

@@ -4,7 +4,7 @@ import { addDays, clampISO, fromISO, cellLabel } from '../utils/dates.js';
 import { RIVALRY_COMP } from '../data/precomputed.js';
 import CalendarDots from './CalendarDots.jsx';
 
-export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo, leagueFilter }) {
+function DateStrip({ selected, onSelect, matchDateSet, dayInfo, leagueFilter }) {
   const scrollerRef = useRef(null);
   const days = useMemo(() => {
     const arr = [];
@@ -82,3 +82,5 @@ export default function DateStrip({ selected, onSelect, matchDateSet, dayInfo, l
     </div>
   );
 }
+
+export default React.memo(DateStrip);
