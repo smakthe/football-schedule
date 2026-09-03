@@ -83,7 +83,8 @@ export default function App() {
     const dayList = fixtures.dateIndex[selectedDate];
     if (dayList) for (const m of dayList) grouped[m[M_COMP]].push(m);
     for (const row of fixtures.bundesliga) {
-      if (selectedDate >= row[0] && selectedDate <= row[1]) {
+      // Only show on the start date of the range (Friday), not on Sat/Sun too
+      if (selectedDate === row[0]) {
         grouped[COMP_BUNDESLIGA].push([COMP_BUNDESLIGA, row[2], row[3], null, row[4]]);
       }
     }
