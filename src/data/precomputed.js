@@ -13,20 +13,39 @@ export function rivalryLabel(homeId, awayId) {
 }
 
 export const TEAM_COMP = new Array(76);
+export const TEAM_ALL_COMPS = [];
 export const TEAMS_BY_COMP = {};
 for (const comp of fixtures.comps) {
   TEAMS_BY_COMP[comp.id] = [];
 }
 
+const tempTeamComps = new Array(fixtures.teams.length).fill(null).map(() => new Set());
+
 for (const date in fixtures.dateIndex) {
   for (const m of fixtures.dateIndex[date]) {
-    TEAM_COMP[m[1]] = m[0];
-    TEAM_COMP[m[2]] = m[0];
+    tempTeamComps[m[1]].add(m[0]);
+    tempTeamComps[m[2]].add(m[0]);
   }
 }
 for (const m of fixtures.bundesliga) {
-  TEAM_COMP[m[2]] = 3;
-  TEAM_COMP[m[3]] = 3;
+  tempTeamComps[m[2]].add(3);
+  tempTeamComps[m[3]].add(3);
+}
+
+for (let i = 0; i < fixtures.teams.length; i++) {
+  TEAM_ALL_COMPS[i] = tempTeamComps[i];
+  
+  let primaryComp = 4; // default to UCL if they don't play domestically in our dataset
+  for (const compId of tempTeamComps[i]) {
+    if (compId !== 4) {
+      primaryComp = compId;
+      break;
+    }
+  }
+  
+  if (tempTeamComps[i].size > 0) {
+    TEAM_COMP[i] = primaryComp;
+  }
 }
 
 export const RIVALRY_COMP = {};
@@ -35,9 +54,10 @@ for (const [homeId, , label] of fixtures.rivalries) {
 }
 
 for (let i = 0; i < fixtures.teams.length; i++) {
-  const compId = TEAM_COMP[i];
-  if (compId !== undefined && TEAMS_BY_COMP[compId]) {
-    TEAMS_BY_COMP[compId].push({ id: i });
+  for (const compId of TEAM_ALL_COMPS[i]) {
+    if (TEAMS_BY_COMP[compId]) {
+      TEAMS_BY_COMP[compId].push({ id: i });
+    }
   }
 }
 

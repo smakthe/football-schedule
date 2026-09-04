@@ -12,8 +12,8 @@ export const COMP_LIGUE1 = 2;
 export const COMP_BUNDESLIGA = 3;
 export const COMP_UCL = 4;
 
-// On-screen ordering: EPL → La Liga → Bundesliga → Ligue 1
-export const DISPLAY_ORDER = [COMP_EPL, COMP_LALIGA, COMP_BUNDESLIGA, COMP_LIGUE1];
+// On-screen ordering: EPL → La Liga → Bundesliga → Ligue 1 → UCL
+export const DISPLAY_ORDER = [COMP_EPL, COMP_LALIGA, COMP_BUNDESLIGA, COMP_LIGUE1, COMP_UCL];
 
 // Season date bounds
 export const MIN_DATE = "2026-08-01";
@@ -25,6 +25,7 @@ export const SOURCE_TZ = {
   [COMP_LALIGA]: { zone: "Europe/Madrid", label: "CET" },
   [COMP_LIGUE1]: { zone: "Europe/Paris", label: "CET" },
   [COMP_BUNDESLIGA]: { zone: "Europe/Berlin", label: "CET" },
+  [COMP_UCL]: { zone: "Europe/Zurich", label: "CET" },
 };
 
 // Short weekday names (Sunday-first)

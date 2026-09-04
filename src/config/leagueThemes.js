@@ -62,6 +62,22 @@ export const LEAGUE_THEMES = {
       "--text-dim": "#CB9AA2",
       "--text-faint": "#8E5860"
     }
+  },
+  4: {
+    id: 4,
+    emoji: "🇪🇺",
+    colors: {
+      primary: "#040F59",
+      secondary: "#B3B5BD",
+    },
+    cssVars: {
+      "--bg": "#02072D",
+      "--surface": "#040F59",
+      "--surface-2": "#071B85",
+      "--border": "rgba(179,181,189,0.15)",
+      "--text-dim": "#B3B5BD",
+      "--text-faint": "#696E7E"
+    }
   }
 };
 

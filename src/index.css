@@ -456,10 +456,13 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   font-size: 14.5px;
   font-weight: 500;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
   min-width: 0;
   transition: color 0.2s ease;
+  line-height: 1.2;
 }
 .team:hover .team-name { color: #5FE0A5; }
 .crest { 

@@ -57,16 +57,21 @@ function TeamFixtureRow({ f, onPick }) {
   );
 }
 
-export default function TeamDetailView({ teamId, onBack, onPick, today }) {
+export default function TeamDetailView({ teamId, compId, onBack, onPick, today }) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const teamFixtures = TEAM_FIXTURES[teamId] || [];
+  let teamFixtures = TEAM_FIXTURES[teamId] || [];
+  if (compId != null) {
+    teamFixtures = teamFixtures.filter((f) => f.compId === compId);
+  }
+  
   const upcoming = teamFixtures.filter((f) => f.date2 >= today);
   const next = upcoming[0];
   const later = upcoming.slice(1);
-  const comp = fixtures.comps[TEAM_COMP[teamId]];
+  const primaryCompId = compId != null ? compId : TEAM_COMP[teamId];
+  const comp = fixtures.comps[primaryCompId];
 
   function exportSeason() {
     exportTeamSchedule(teamId, upcoming);
@@ -78,7 +83,7 @@ export default function TeamDetailView({ teamId, onBack, onPick, today }) {
         <Crest teamId={teamId} size={48} />
         <div className="team-header-text">
           <h2>{fixtures.teams[teamId]}</h2>
-          <span className="league-sub" style={{ color: getThemeAccent(TEAM_COMP[teamId]) }}>{comp.name}</span>
+          <span className="league-sub" style={{ color: getThemeAccent(primaryCompId) }}>{comp.name}</span>
         </div>
         <button className="jump-today" onClick={onBack}>Change</button>
       </div>
