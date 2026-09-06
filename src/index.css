@@ -464,6 +464,14 @@ button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
   transition: color 0.2s ease;
   line-height: 1.2;
 }
+
+@media (max-width: 480px) {
+  .team-name {
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
 .team:hover .team-name { color: #D97706; }
 .crest { 
   object-fit: contain; flex: 0 0 auto; 

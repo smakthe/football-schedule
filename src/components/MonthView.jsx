@@ -82,7 +82,13 @@ export default function MonthView({ cursor, onNavigate, selectedDate, today, onP
             >
               {filteredRiv.length > 0 && <span className="cal-star" aria-hidden="true">&#9733;</span>}
               <span className="month-daynum" aria-hidden="true">{fromISO(iso).getDate()}</span>
-              <CalendarDots ids={leagueFilter != null ? (info ? info.c : []).filter(id => id === leagueFilter) : (info ? info.c : [])} />
+              {leagueFilter == null ? (
+                <CalendarDots ids={info ? info.c : []} />
+              ) : (
+                info && info.c.includes(leagueFilter) && (
+                  <span className="cal-dots"><span className="cal-dot" style={{ background: "#FFFFFF" }} /></span>
+                )
+              )}
             </button>
           );
         })}

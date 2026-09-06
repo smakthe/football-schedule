@@ -74,12 +74,15 @@ function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
               <span className="day-num" aria-hidden="true">{d.getDate()}</span>
               {(() => {
                 const rawIds = dayInfo[iso]?.c || [];
-                const dotIds = leagueFilter != null ? rawIds.filter(id => id === leagueFilter) : rawIds;
-                return dotIds.length > 0 ? (
-                  <CalendarDots ids={dotIds} />
-                ) : (
-                  <span className="day-dot" aria-hidden="true" />
-                );
+                if (leagueFilter == null) {
+                  return rawIds.length > 0 ? <CalendarDots ids={rawIds} /> : <span className="day-dot" aria-hidden="true" />;
+                } else {
+                  return rawIds.includes(leagueFilter) ? (
+                    <span className="cal-dots"><span className="cal-dot" style={{ background: "#FFFFFF" }} /></span>
+                  ) : (
+                    <span className="day-dot" aria-hidden="true" />
+                  );
+                }
               })()}
             </button>
           );

@@ -3,14 +3,15 @@ export const LEAGUE_THEMES = {
     id: 0,
     emoji: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
     colors: {
-      primary: "#3D1F8C", // Original fixtures.comps[0].color
-      secondary: "#6C3FE0", // Original fixtures.comps[0].color2
+      primary: "#3D1F8C",
+      secondary: "#6C3FE0",
     },
     cssVars: {
       "--bg": "#0E0A1E",
       "--surface": "#17123A",
       "--surface-2": "#201848",
       "--border": "rgba(180,160,255,0.1)",
+      "--text": "#F3F5F0",
       "--text-dim": "#A89DC8",
       "--text-faint": "#6B5F8E"
     }
@@ -27,6 +28,7 @@ export const LEAGUE_THEMES = {
       "--surface": "#2E1610",
       "--surface-2": "#3D1E16",
       "--border": "rgba(255,150,120,0.1)",
+      "--text": "#F3F5F0",
       "--text-dim": "#CBA090",
       "--text-faint": "#8E6558"
     }
@@ -43,6 +45,7 @@ export const LEAGUE_THEMES = {
       "--surface": "#0F1838",
       "--surface-2": "#152248",
       "--border": "rgba(120,160,255,0.1)",
+      "--text": "#F3F5F0",
       "--text-dim": "#97ABCB",
       "--text-faint": "#5A6E8E"
     }
@@ -59,6 +62,7 @@ export const LEAGUE_THEMES = {
       "--surface": "#2E1218",
       "--surface-2": "#3D1A22",
       "--border": "rgba(255,120,140,0.1)",
+      "--text": "#F3F5F0",
       "--text-dim": "#CB9AA2",
       "--text-faint": "#8E5860"
     }
@@ -75,6 +79,7 @@ export const LEAGUE_THEMES = {
       "--surface": "#040F59",
       "--surface-2": "#071B85",
       "--border": "rgba(179,181,189,0.15)",
+      "--text": "#F3F5F0",
       "--text-dim": "#B3B5BD",
       "--text-faint": "#696E7E"
     }
@@ -86,6 +91,7 @@ export const THEME_CSS_VARS = [
   "--surface",
   "--surface-2",
   "--border",
+  "--text",
   "--text-dim",
   "--text-faint"
 ];
