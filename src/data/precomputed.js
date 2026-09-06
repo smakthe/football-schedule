@@ -12,7 +12,7 @@ export function rivalryLabel(homeId, awayId) {
   return RIVALRY_MAP.get(`${homeId}-${awayId}`) || null;
 }
 
-export const TEAM_COMP = new Array(76);
+export const TEAM_COMP = new Array(fixtures.teams.length);
 export const TEAM_ALL_COMPS = [];
 export const TEAMS_BY_COMP = {};
 for (const comp of fixtures.comps) {

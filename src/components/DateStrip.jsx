@@ -4,6 +4,19 @@ import { addDays, clampISO, fromISO, cellLabel } from '../utils/dates.js';
 import { RIVALRY_COMP } from '../data/precomputed.js';
 import CalendarDots from './CalendarDots.jsx';
 
+// Extracted to avoid inline function allocations in the render loop
+const DayDots = React.memo(({ rawIds, leagueFilter }) => {
+  if (leagueFilter == null) {
+    return rawIds.length > 0 ? <CalendarDots ids={rawIds} /> : <span className="day-dot" aria-hidden="true" />;
+  } else {
+    return rawIds.includes(leagueFilter) ? (
+      <span className="cal-dots"><span className="cal-dot" style={{ background: "#FFFFFF" }} /></span>
+    ) : (
+      <span className="day-dot" aria-hidden="true" />
+    );
+  }
+});
+
 function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
   const scrollerRef = useRef(null);
   const days = useMemo(() => {
@@ -60,6 +73,8 @@ function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
           const d = fromISO(iso);
           const isSel = iso === selected;
           const inRange = iso >= MIN_DATE && iso <= MAX_DATE;
+          const rawIds = dayInfo[iso]?.c || [];
+          
           return (
             <button
               key={iso}
@@ -72,18 +87,7 @@ function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
             >
               <span className="day-wd" aria-hidden="true">{WD_S[d.getDay()]}</span>
               <span className="day-num" aria-hidden="true">{d.getDate()}</span>
-              {(() => {
-                const rawIds = dayInfo[iso]?.c || [];
-                if (leagueFilter == null) {
-                  return rawIds.length > 0 ? <CalendarDots ids={rawIds} /> : <span className="day-dot" aria-hidden="true" />;
-                } else {
-                  return rawIds.includes(leagueFilter) ? (
-                    <span className="cal-dots"><span className="cal-dot" style={{ background: "#FFFFFF" }} /></span>
-                  ) : (
-                    <span className="day-dot" aria-hidden="true" />
-                  );
-                }
-              })()}
+              <DayDots rawIds={rawIds} leagueFilter={leagueFilter} />
             </button>
           );
         })}

@@ -1,19 +1,38 @@
 import React, { useState, useEffect } from 'react';
 
+// Singleton promise — shared by all CompBadge instances.
+let leagueLogosPromise = null;
+let leagueLogosData = null;
+
+function ensureLeagueLogos() {
+  if (!leagueLogosPromise) {
+    leagueLogosPromise = import('../data/leagueLogos.json').then((module) => {
+      leagueLogosData = module.default;
+      return leagueLogosData;
+    });
+  }
+  return leagueLogosPromise;
+}
+
 function CompBadge({ comp, size = 30 }) {
-  const [src, setSrc] = useState(null);
+  const [ready, setReady] = useState(leagueLogosData !== null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    import('../data/leagueLogos.json').then((module) => {
-      const key = comp.id !== undefined ? String(comp.id) : (comp.short === 'UCL' ? 'ucl' : null);
-      setSrc(module.default[key]);
+    if (leagueLogosData) return;
+    let cancelled = false;
+    ensureLeagueLogos().then(() => {
+      if (!cancelled) setReady(true);
     }).catch(() => {
-      setFailed(true);
+      if (!cancelled) setFailed(true);
     });
-  }, [comp.id, comp.short]);
+    return () => { cancelled = true; };
+  }, []);
 
-  if (src && !failed) {
+  const key = comp.id !== undefined ? String(comp.id) : (comp.short === 'UCL' ? 'ucl' : null);
+  const src = leagueLogosData?.[key];
+
+  if (src && !failed && ready) {
     return (
       <div 
         className="comp-badge" 

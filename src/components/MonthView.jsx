@@ -1,8 +1,43 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { MO, WD_S, MIN_DATE, MAX_DATE } from '../data/constants.js';
 import { getMonthCells, fromISO, addDays, clampISO, addMonths, cellLabel } from '../utils/dates.js';
 import { RIVALRY_COMP } from '../data/precomputed.js';
 import CalendarDots from './CalendarDots.jsx';
+
+const MonthCell = React.memo(({ 
+  iso, inMonth, info, inRange, selectedDate, today, focusedISO, leagueFilter, onPick, onFocus 
+}) => {
+  const cls = ["month-cell"];
+  if (!inMonth) cls.push("outside");
+  if (!inRange) cls.push("disabled");
+  if (iso === selectedDate) cls.push("selected");
+  if (iso === today) cls.push("today");
+  
+  const filteredRiv = (info && info.riv) 
+    ? (leagueFilter != null ? info.riv.filter(r => RIVALRY_COMP[r] === leagueFilter) : info.riv) 
+    : [];
+  
+  return (
+    <button
+      data-iso={iso} role="gridcell" className={cls.join(" ")} disabled={!inRange}
+      tabIndex={iso === focusedISO ? 0 : -1}
+      aria-label={cellLabel(iso, info, leagueFilter, RIVALRY_COMP)}
+      aria-current={iso === today ? "date" : undefined}
+      aria-selected={iso === selectedDate}
+      onClick={() => { onFocus(iso); onPick(iso); }}
+    >
+      {filteredRiv.length > 0 && <span className="cal-star" aria-hidden="true">&#9733;</span>}
+      <span className="month-daynum" aria-hidden="true">{fromISO(iso).getDate()}</span>
+      {leagueFilter == null ? (
+        <CalendarDots ids={info ? info.c : []} />
+      ) : (
+        info && info.c.includes(leagueFilter) && (
+          <span className="cal-dots"><span className="cal-dot" style={{ background: "#FFFFFF" }} /></span>
+        )
+      )}
+    </button>
+  );
+});
 
 export default function MonthView({ cursor, onNavigate, selectedDate, today, onPick, dayInfo, leagueFilter }) {
   const cells = useMemo(() => getMonthCells(cursor), [cursor]);
@@ -58,40 +93,21 @@ export default function MonthView({ cursor, onNavigate, selectedDate, today, onP
       </div>
       <div className="month-grid" ref={gridRef} role="grid" aria-label={`${MO[c.getMonth()]} ${c.getFullYear()}`} onKeyDown={handleKeyDown}>
         {WD_S.map((w) => <div key={w} className="month-weekday" aria-hidden="true">{w[0]}</div>)}
-        {cells.map(({ iso, inMonth }) => {
-          const info = dayInfo[iso];
-          const inRange = iso >= MIN_DATE && iso <= MAX_DATE;
-          const cls = ["month-cell"];
-          if (!inMonth) cls.push("outside");
-          if (!inRange) cls.push("disabled");
-          if (iso === selectedDate) cls.push("selected");
-          if (iso === today) cls.push("today");
-          
-          const filteredRiv = (info && info.riv) 
-            ? (leagueFilter != null ? info.riv.filter(r => RIVALRY_COMP[r] === leagueFilter) : info.riv) 
-            : [];
-          
-          return (
-            <button
-              key={iso} data-iso={iso} role="gridcell" className={cls.join(" ")} disabled={!inRange}
-              tabIndex={iso === focusedISO ? 0 : -1}
-              aria-label={cellLabel(iso, info, leagueFilter, RIVALRY_COMP)}
-              aria-current={iso === today ? "date" : undefined}
-              aria-selected={iso === selectedDate}
-              onClick={() => { setFocusedISO(iso); onPick(iso); }}
-            >
-              {filteredRiv.length > 0 && <span className="cal-star" aria-hidden="true">&#9733;</span>}
-              <span className="month-daynum" aria-hidden="true">{fromISO(iso).getDate()}</span>
-              {leagueFilter == null ? (
-                <CalendarDots ids={info ? info.c : []} />
-              ) : (
-                info && info.c.includes(leagueFilter) && (
-                  <span className="cal-dots"><span className="cal-dot" style={{ background: "#FFFFFF" }} /></span>
-                )
-              )}
-            </button>
-          );
-        })}
+        {cells.map(({ iso, inMonth }) => (
+          <MonthCell 
+            key={iso}
+            iso={iso}
+            inMonth={inMonth}
+            info={dayInfo[iso]}
+            inRange={iso >= MIN_DATE && iso <= MAX_DATE}
+            selectedDate={selectedDate}
+            today={today}
+            focusedISO={focusedISO}
+            leagueFilter={leagueFilter}
+            onPick={onPick}
+            onFocus={setFocusedISO}
+          />
+        ))}
       </div>
     </div>
   );

@@ -93,17 +93,19 @@ export default function App() {
     return grouped;
   }, [selectedDate]);
 
-  const filteredOrder = leagueFilter != null
+  const filteredOrder = useMemo(() => leagueFilter != null
     ? DISPLAY_ORDER.filter(id => id === leagueFilter)
-    : DISPLAY_ORDER;
+    : DISPLAY_ORDER, [leagueFilter]);
 
-  const totalMatches = filteredOrder.reduce((s, id) => s + matchesByComp[id].length, 0);
-  const activeLeagueCount = filteredOrder.filter((id) => matchesByComp[id].length > 0).length;
-  const isEmpty = totalMatches === 0;
+  const { totalMatches, activeLeagueCount, isEmpty } = useMemo(() => {
+    const total = filteredOrder.reduce((s, id) => s + matchesByComp[id].length, 0);
+    const active = filteredOrder.filter((id) => matchesByComp[id].length > 0).length;
+    return { totalMatches: total, activeLeagueCount: active, isEmpty: total === 0 };
+  }, [filteredOrder, matchesByComp]);
 
   const { copied, copy: copyDay } = useClipboard();
 
-  function exportDay() {
+  const exportDay = useCallback(() => {
     const vevents = [];
     filteredOrder.forEach((id) => {
       matchesByComp[id].forEach((m) => {
@@ -114,11 +116,13 @@ export default function App() {
       });
     });
     downloadICS(`football-${selectedDate}.ics`, buildICS(vevents));
-  }
+  }, [filteredOrder, matchesByComp, selectedDate]);
 
-  function handleCopyDay() {
+  const handleCopyDay = useCallback(() => {
     copyDay(buildShareText(selectedDate, matchesByComp));
-  }
+  }, [copyDay, selectedDate, matchesByComp]);
+
+  const todayStr = useMemo(() => todayISO(), []);
 
   return (
     <div className="shell" data-league={leagueFilter}>
@@ -183,7 +187,7 @@ export default function App() {
             cursor={calendarCursor}
             onNavigate={(n) => setCalendarCursor(clampISO(addMonths(calendarCursor, n)))}
             selectedDate={selectedDate}
-            today={todayISO()}
+            today={todayStr}
             onPick={pickDay}
             dayInfo={fixtures.dayInfo}
             leagueFilter={leagueFilter}
@@ -204,7 +208,7 @@ export default function App() {
               compId={selectedTeamCompId} 
               onBack={() => { setSelectedTeamId(null); setSelectedTeamCompId(null); }} 
               onPick={pickDay} 
-              today={todayISO()} 
+              today={todayStr} 
             />
           )}
         </Suspense>

@@ -3,11 +3,13 @@ import { DISPLAY_ORDER, M_HOME, M_AWAY, M_TIME, M_COMP, SOURCE_TZ, COMP_EPL } fr
 import { longDate } from './dates.js';
 import { kickoffToLocalDate } from './timezone.js';
 
-function getISTTime(dateISO, time, compId) {
+import { VIEWER_TZ } from '../data/constants.js';
+
+function getLocalTime(dateISO, time, compId) {
   if (!time) return "";
   const src = SOURCE_TZ[compId] || SOURCE_TZ[COMP_EPL];
   const localDate = kickoffToLocalDate(src.zone, dateISO, time);
-  return localDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Kolkata' });
+  return localDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
 export function buildMatchShareText(m, date) {
@@ -16,8 +18,8 @@ export function buildMatchShareText(m, date) {
   if (compId === 'ucl') compName = "Champions League";
   else if (compId !== null) compName = fixtures.comps[compId].name;
 
-  const istTime = getISTTime(date, time, compId);
-  return `\u26bd ${home} vs ${away}\n${compName ? compName + "\n" : ""}${longDate(date)}${time ? " \u2014 " + time + " UK (" + istTime + " IST)" : ""}`;
+  const localTime = getLocalTime(date, time, compId);
+  return `\u26bd ${home} vs ${away}\n${compName ? compName + "\n" : ""}${longDate(date)}${time ? " \u2014 " + time + " UK (" + localTime + " Local)" : ""}`;
 }
 
 export async function copyText(text) {
@@ -56,8 +58,8 @@ export function buildShareText(selectedDate, matchesByComp) {
     lines.push(compName);
     matches.forEach((m) => {
       const home = fixtures.teams[m[M_HOME]], away = fixtures.teams[m[M_AWAY]], time = m[M_TIME];
-      const istTime = getISTTime(selectedDate, time, id);
-      lines.push(`${home} vs ${away}${time ? " \u2014 " + time + " UK (" + istTime + " IST)" : ""}`);
+      const localTime = getLocalTime(selectedDate, time, id);
+      lines.push(`${home} vs ${away}${time ? " \u2014 " + time + " UK (" + localTime + " Local)" : ""}`);
     });
     lines.push("");
   });

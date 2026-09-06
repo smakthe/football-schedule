@@ -58,7 +58,7 @@ export function downloadICS(filename, content) {
 import fixtures from '../data/fixtures.json';
 
 export function exportSingleMatch(m, date) {
-  const [homeId, awayId, time, compId, round] = m;
+  const [compId, homeId, awayId, time, round] = m;
   const comp = fixtures.comps[compId];
   const vevent = matchToVEvent({
     dateISO: date, compName: comp.name, 
