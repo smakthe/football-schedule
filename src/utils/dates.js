@@ -1,4 +1,4 @@
-import { MIN_DATE, MAX_DATE, WD_S, MO } from '../data/constants.js';
+import { MIN_DATE, MAX_DATE, WD_S, WD_L, MO } from '../data/constants.js';
 
 // All dates are plain YYYY-MM-DD strings.
 // fromISO/toISO deliberately construct *local* Date objects (not UTC).
@@ -51,6 +51,29 @@ export function getMonthCells(cursorISO) {
 export function longDate(iso) {
   const d = fromISO(iso);
   return `${WD_S[d.getDay()]}, ${d.getDate()} ${MO[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+// "30 September 2026" — weekday is shown separately in the day header
+export function dateHeadline(iso) {
+  const d = fromISO(iso);
+  return `${d.getDate()} ${MO[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+export function monthLabel(iso) {
+  const d = fromISO(iso);
+  return `${MO[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+export function daysBetween(fromIso, toIso) {
+  return Math.round((fromISO(toIso) - fromISO(fromIso)) / 86400000);
+}
+
+export function relativeDayLabel(iso, todayIso) {
+  const n = daysBetween(todayIso, iso);
+  if (n === 0) return "Today";
+  if (n === 1) return "Tomorrow";
+  if (n === -1) return "Yesterday";
+  return WD_L[fromISO(iso).getDay()];
 }
 
 export function shortDate(iso) {

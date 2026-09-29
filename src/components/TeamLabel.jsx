@@ -8,11 +8,11 @@ function TeamLabel({ teamId, size = 32, reverse = false, className = "team-label
   const content = reverse ? (
     <>
       <Crest teamId={teamId} size={size} />
-      <span className={direction === 'col' ? "tf-opp-name" : "team-name"}>{fixtures.teams[teamId]}</span>
+      <span className={direction === 'col' ? "team-name-stacked" : "team-name"}>{fixtures.teams[teamId]}</span>
     </>
   ) : (
     <>
-      <span className={direction === 'col' ? "tf-opp-name" : "team-name"}>{fixtures.teams[teamId]}</span>
+      <span className={direction === 'col' ? "team-name-stacked" : "team-name"}>{fixtures.teams[teamId]}</span>
       <Crest teamId={teamId} size={size} />
     </>
   );

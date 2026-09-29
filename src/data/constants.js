@@ -28,8 +28,9 @@ export const SOURCE_TZ = {
   [COMP_UCL]: { zone: "Europe/Zurich", label: "CET" },
 };
 
-// Short weekday names (Sunday-first)
+// Weekday names (Sunday-first)
 export const WD_S = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+export const WD_L = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
 // Full month names
 export const MO = [

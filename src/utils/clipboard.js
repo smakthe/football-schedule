@@ -3,8 +3,6 @@ import { DISPLAY_ORDER, M_HOME, M_AWAY, M_TIME, M_COMP, SOURCE_TZ, COMP_EPL } fr
 import { longDate } from './dates.js';
 import { kickoffToLocalDate } from './timezone.js';
 
-import { VIEWER_TZ } from '../data/constants.js';
-
 function getLocalTime(dateISO, time, compId) {
   if (!time) return "";
   const src = SOURCE_TZ[compId] || SOURCE_TZ[COMP_EPL];

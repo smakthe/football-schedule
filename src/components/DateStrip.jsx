@@ -1,23 +1,20 @@
 import React, { useRef, useState, useMemo, useEffect } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MIN_DATE, MAX_DATE, WD_S } from '../data/constants.js';
 import { addDays, clampISO, fromISO, cellLabel } from '../utils/dates.js';
 import { RIVALRY_COMP } from '../data/precomputed.js';
 import CalendarDots from './CalendarDots.jsx';
 
-// Extracted to avoid inline function allocations in the render loop
 const DayDots = React.memo(({ rawIds, leagueFilter }) => {
   if (leagueFilter == null) {
     return rawIds.length > 0 ? <CalendarDots ids={rawIds} /> : <span className="day-dot" aria-hidden="true" />;
-  } else {
-    return rawIds.includes(leagueFilter) ? (
-      <span className="cal-dots"><span className="cal-dot" style={{ background: "#FFFFFF" }} /></span>
-    ) : (
-      <span className="day-dot" aria-hidden="true" />
-    );
   }
+  return rawIds.includes(leagueFilter)
+    ? <span className="cal-dots"><span className="cal-dot filtered" /></span>
+    : <span className="day-dot" aria-hidden="true" />;
 });
 
-function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
+function DateStrip({ selected, today, onSelect, dayInfo, leagueFilter }) {
   const scrollerRef = useRef(null);
   const days = useMemo(() => {
     const arr = [];
@@ -35,19 +32,14 @@ function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
   React.useLayoutEffect(() => {
     const el = scrollerRef.current?.querySelector(".day-pill.selected");
     if (el && typeof el.scrollIntoView === "function") {
-      el.scrollIntoView({ 
-        behavior: isInitialMount.current ? "auto" : "smooth", 
-        inline: "center", 
-        block: "nearest" 
-      });
+      el.scrollIntoView({ behavior: isInitialMount.current ? "auto" : "smooth", inline: "center", block: "nearest" });
       isInitialMount.current = false;
     }
   }, [selected]);
 
   function focusPillAt(idx) {
     setFocusIdx(idx);
-    const btn = scrollerRef.current?.querySelectorAll(".day-pill")[idx];
-    btn?.focus();
+    scrollerRef.current?.querySelectorAll(".day-pill")[idx]?.focus();
   }
 
   function handleKeyDown(e) {
@@ -57,7 +49,6 @@ function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
     else if (e.key === "Home") next = 0;
     else if (e.key === "End") next = days.length - 1;
     else return;
-    
     e.preventDefault();
     const dir = next >= focusIdx ? 1 : -1;
     while (next >= 0 && next < days.length && (days[next] < MIN_DATE || days[next] > MAX_DATE)) next += dir;
@@ -67,18 +58,22 @@ function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
 
   return (
     <div className="date-strip-wrap">
-      <button className="page-btn" aria-label="Previous day" onClick={() => onSelect(clampISO(addDays(selected, -1)))}>&#8249;</button>
+      <button className="btn round" aria-label="Previous day" onClick={() => onSelect(clampISO(addDays(selected, -1)))}>
+        <ChevronLeft size={18} aria-hidden="true" />
+      </button>
       <div className="date-strip" ref={scrollerRef} role="group" aria-label="Browse nearby dates" onKeyDown={handleKeyDown}>
         {days.map((iso, i) => {
           const d = fromISO(iso);
           const isSel = iso === selected;
           const inRange = iso >= MIN_DATE && iso <= MAX_DATE;
           const rawIds = dayInfo[iso]?.c || [];
-          
+          const cls = ["day-pill"];
+          if (isSel) cls.push("selected");
+          if (iso === today) cls.push("today");
           return (
             <button
               key={iso}
-              className={"day-pill" + (isSel ? " selected" : "") + (!inRange ? " disabled" : "")}
+              className={cls.join(" ")}
               disabled={!inRange}
               tabIndex={i === focusIdx ? 0 : -1}
               aria-current={isSel ? "date" : undefined}
@@ -92,7 +87,9 @@ function DateStrip({ selected, onSelect, dayInfo, leagueFilter }) {
           );
         })}
       </div>
-      <button className="page-btn" aria-label="Next day" onClick={() => onSelect(clampISO(addDays(selected, 1)))}>&#8250;</button>
+      <button className="btn round" aria-label="Next day" onClick={() => onSelect(clampISO(addDays(selected, 1)))}>
+        <ChevronRight size={18} aria-hidden="true" />
+      </button>
     </div>
   );
 }

@@ -1,38 +1,48 @@
 import { useRef } from 'react';
+import { CalendarDays, Calendar, Shield } from 'lucide-react';
 
-const VIEW_MODES = ["day", "month", "team"];
+const VIEWS = [
+  { id: "day", label: "Day", Icon: CalendarDays },
+  { id: "month", label: "Month", Icon: Calendar },
+  { id: "team", label: "Club", Icon: Shield },
+];
 
 export default function ViewToggle({ mode, onChange }) {
   const ref = useRef(null);
-  
+  const idx = Math.max(0, VIEWS.findIndex((v) => v.id === mode));
+
   function handleKeyDown(e) {
-    const idx = VIEW_MODES.indexOf(mode);
     let next;
-    if (e.key === "ArrowRight") next = (idx + 1) % VIEW_MODES.length;
-    else if (e.key === "ArrowLeft") next = (idx - 1 + VIEW_MODES.length) % VIEW_MODES.length;
+    if (e.key === "ArrowRight") next = (idx + 1) % VIEWS.length;
+    else if (e.key === "ArrowLeft") next = (idx - 1 + VIEWS.length) % VIEWS.length;
     else if (e.key === "Home") next = 0;
-    else if (e.key === "End") next = VIEW_MODES.length - 1;
+    else if (e.key === "End") next = VIEWS.length - 1;
     else return;
-    
     e.preventDefault();
-    onChange(VIEW_MODES[next]);
+    onChange(VIEWS[next].id);
     ref.current?.querySelectorAll("button")[next]?.focus();
   }
-  
+
   return (
-    <div className="view-toggle" role="tablist" aria-label="Calendar view" ref={ref} onKeyDown={handleKeyDown}>
-      {VIEW_MODES.map((m) => (
+    <nav className="view-nav" role="tablist" aria-label="View" ref={ref} onKeyDown={handleKeyDown}>
+      <span
+        className="view-nav-indicator"
+        aria-hidden="true"
+        style={{ transform: `translateX(calc(${idx} * (100% + 2px)))` }}
+      />
+      {VIEWS.map(({ id, label, Icon }) => (
         <button
-          key={m}
+          key={id}
           role="tab"
-          aria-selected={mode === m}
-          tabIndex={mode === m ? 0 : -1}
-          className={mode === m ? "active" : ""}
-          onClick={() => onChange(m)}
+          className="view-tab"
+          aria-selected={mode === id}
+          tabIndex={mode === id ? 0 : -1}
+          onClick={() => onChange(id)}
         >
-          {m === "team" ? "club" : m}
+          <Icon size={17} strokeWidth={2} aria-hidden="true" />
+          <span>{label}</span>
         </button>
       ))}
-    </div>
+    </nav>
   );
 }

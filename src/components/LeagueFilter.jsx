@@ -1,92 +1,68 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import fixtures from '../data/fixtures.json';
 import { DISPLAY_ORDER } from '../data/constants.js';
-import { LEAGUE_THEMES } from '../config/leagueThemes.js';
+import CompBadge from './CompBadge.jsx';
 
+// Always-visible chip rail. Tapping the active league clears it; "All" is an
+// explicit escape hatch so the behaviour is discoverable on touch.
 export default function LeagueFilter({ active, onChange }) {
-  const [expanded, setExpanded] = useState(false);
-  const collapseTimer = useRef(null);
-  const wrapRef = useRef(null);
+  const railRef = useRef(null);
 
-  // Close on click/tap outside
   useEffect(() => {
-    if (!expanded) return;
-    function onDown(e) {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
-        setExpanded(false);
-      }
-    }
-    document.addEventListener('pointerdown', onDown, true);
-    return () => document.removeEventListener('pointerdown', onDown, true);
-  }, [expanded]);
+    railRef.current
+      ?.querySelector('[aria-checked="true"]')
+      ?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }, [active]);
 
-  function handlePick(compId) {
-    onChange(active === compId ? null : compId);
+  function handleKeyDown(e) {
+    if (!["ArrowRight", "ArrowLeft", "Home", "End"].includes(e.key)) return;
+    e.preventDefault();
+    const chips = [...railRef.current.querySelectorAll('[role="radio"]')];
+    const cur = chips.indexOf(document.activeElement);
+    let next = cur;
+    if (e.key === "ArrowRight") next = (cur + 1) % chips.length;
+    else if (e.key === "ArrowLeft") next = (cur - 1 + chips.length) % chips.length;
+    else if (e.key === "Home") next = 0;
+    else next = chips.length - 1;
+    chips[next]?.focus();
+    chips[next]?.click();
   }
-
-  function handleToggle() {
-    setExpanded(!expanded);
-  }
-
-  const clearCollapseTimer = useCallback(() => {
-    if (collapseTimer.current) {
-      clearTimeout(collapseTimer.current);
-      collapseTimer.current = null;
-    }
-  }, []);
-
-  const startCollapseTimer = useCallback(() => {
-    clearCollapseTimer();
-    collapseTimer.current = setTimeout(() => {
-      setExpanded(false);
-    }, 100);
-  }, [clearCollapseTimer]);
-
-  const hasFilter = active !== null;
-  const activeComp = hasFilter ? LEAGUE_THEMES[active] : null;
 
   return (
     <div
-      className="league-filter-wrap"
-      ref={wrapRef}
-      onMouseEnter={() => { clearCollapseTimer(); setExpanded(true); }}
-      onMouseLeave={startCollapseTimer}
+      ref={railRef}
+      className="league-rail"
+      role="radiogroup"
+      aria-label="Filter by competition"
+      onKeyDown={handleKeyDown}
     >
       <button
-        className={"league-filter-toggle" + (hasFilter ? " filtered" : "")}
-        onClick={handleToggle}
-        aria-label={expanded ? "Collapse league filter" : "Expand league filter"}
-        aria-expanded={expanded}
-        style={hasFilter ? { color: activeComp.colors.secondary } : undefined}
+        role="radio"
+        aria-checked={active == null}
+        tabIndex={active == null ? 0 : -1}
+        className={"chip all" + (active == null ? " active" : "")}
+        onClick={() => onChange(null)}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path d="M1 2h14M3 5.5h10M5.5 9h5M7 12.5h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </svg>
-        {hasFilter && !expanded && (
-          <span className="filter-active-label" style={{ fontSize: '14px' }}>{activeComp.emoji}</span>
-        )}
+        All
       </button>
-      <div className={"league-filter-pills" + (expanded ? " open" : "")}>
-        {DISPLAY_ORDER.map((id) => {
-          const comp = LEAGUE_THEMES[id];
-          const origComp = fixtures.comps[id];
-          return (
-            <button
-              key={id}
-              className={"filter-pill" + (active === id ? " active" : "")}
-              style={{
-                "--pill-color": comp.colors.secondary,
-                "--pill-bg": comp.colors.primary,
-                fontSize: '14px'
-              }}
-              onClick={() => handlePick(id)}
-              aria-label={origComp.name}
-            >
-              {comp.emoji}
-            </button>
-          );
-        })}
-      </div>
+      {DISPLAY_ORDER.map((id) => {
+        const comp = fixtures.comps[id];
+        const isActive = active === id;
+        return (
+          <button
+            key={id}
+            role="radio"
+            aria-checked={isActive}
+            tabIndex={isActive ? 0 : -1}
+            className={"chip" + (isActive ? " active" : "")}
+            style={{ "--chip-color": comp.color }}
+            onClick={() => onChange(isActive ? null : id)}
+          >
+            <CompBadge comp={comp} size={20} />
+            <span>{comp.name}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }

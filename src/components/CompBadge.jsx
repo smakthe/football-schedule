@@ -39,9 +39,8 @@ function CompBadge({ comp, size = 30 }) {
         style={{ 
           width: size, 
           height: size, 
-          background: '#ffffff', 
-          boxShadow: '0 2px 10px rgba(0,0,0,0.15)',
-          padding: size * 0.15, 
+          background: '#ffffff',
+          padding: size * 0.15,
           boxSizing: 'border-box'
         }}
       >

@@ -1,6 +1,19 @@
 import fixtures from './fixtures.json';
 
-export const MATCH_DATE_SET = new Set(fixtures.matchDates);
+const SORTED_MATCH_DATES = [...fixtures.matchDates].sort();
+
+// Nearest date with matches strictly before (dir < 0) or after (dir > 0) `iso`.
+export function adjacentMatchDate(iso, dir, leagueFilter = null) {
+  const inScope = (d) => leagueFilter == null || (fixtures.dayInfo[d]?.c || []).includes(leagueFilter);
+  if (dir > 0) {
+    for (const d of SORTED_MATCH_DATES) if (d > iso && inScope(d)) return d;
+  } else {
+    for (let i = SORTED_MATCH_DATES.length - 1; i >= 0; i--) {
+      if (SORTED_MATCH_DATES[i] < iso && inScope(SORTED_MATCH_DATES[i])) return SORTED_MATCH_DATES[i];
+    }
+  }
+  return null;
+}
 
 const RIVALRY_MAP = new Map();
 for (const [homeId, awayId, label] of fixtures.rivalries) {
@@ -65,7 +78,6 @@ export const DOT_COLORS = {};
 for (const comp of fixtures.comps) {
   DOT_COLORS[comp.id] = comp.color;
 }
-DOT_COLORS[4] = fixtures.ucl.color;
 
 // Precompute team fixtures (O(1) lookup vs O(N) scan on render)
 export const TEAM_FIXTURES = new Array(fixtures.teams.length).fill(null).map(() => []);

@@ -1,110 +1,146 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { ArrowLeft, Download } from 'lucide-react';
 import fixtures from '../data/fixtures.json';
+import { WD_S } from '../data/constants.js';
 import { TEAM_COMP, TEAM_FIXTURES } from '../data/precomputed.js';
-import { shortDate, longDate } from '../utils/dates.js';
+import { shortDate, longDate, monthLabel, fromISO } from '../utils/dates.js';
 import { exportTeamSchedule } from '../utils/ics.js';
-import { Download } from 'lucide-react';
+import { toast } from '../utils/toast.js';
 import Crest from './Crest.jsx';
+import CompBadge from './CompBadge.jsx';
 import TeamLabel from './TeamLabel.jsx';
 import VenueBadge from './VenueBadge.jsx';
 import { KickoffTime } from './KickoffTime.jsx';
-import { getThemeAccent } from '../config/leagueThemes.js';
-
-const getMatchTeams = (f, teamId) => ({
-  homeId: f.isHome ? teamId : f.oppId,
-  awayId: f.isHome ? f.oppId : teamId,
-});
 
 function NextFixtureCard({ f, teamId, onPick }) {
   const comp = fixtures.comps[f.compId];
-  const { homeId, awayId } = getMatchTeams(f, teamId);
-  return (
-    <button className="next-fixture-card" style={{ "--accent2": getThemeAccent(f.compId), position: 'relative' }} onClick={() => onPick(f.date)}>
-      
-      <span className="nf-label" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
-          <VenueBadge isHome={f.isHome} style={{ position: 'absolute', right: '100%', marginRight: '8px' }} />
-          <span>Next match &middot; {comp.name}{f.round ? ` \u00b7 Matchday ${f.round}` : ""}</span>
-        </div>
-        <span style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'none', letterSpacing: 'normal', fontFamily: "'Inter', sans-serif" }}>
-          {f.date === f.date2 ? longDate(f.date) : `${shortDate(f.date)} \u2013 ${shortDate(f.date2)}`}
-        </span>
-      </span>
+  const homeId = f.isHome ? teamId : f.oppId;
+  const awayId = f.isHome ? f.oppId : teamId;
+  const when = f.date === f.date2 ? longDate(f.date) : `${shortDate(f.date)} – ${shortDate(f.date2)}`;
 
+  return (
+    <button className="next-fixture-card" style={{ "--league-color": comp.color2 }} onClick={() => onPick(f.date)}>
+      <span className="nf-label">
+        <VenueBadge isHome={f.isHome} />
+        <span>Next match &middot; {comp.name}{f.round ? ` · MD ${f.round}` : ""}</span>
+      </span>
       <div className="nf-matchup">
-        <TeamLabel teamId={homeId} size={38} reverse={true} direction="col" className="nf-team" />
+        <TeamLabel teamId={homeId} size={44} reverse={true} direction="col" className="nf-team" />
         <span className="nf-vs">vs</span>
-        <TeamLabel teamId={awayId} size={38} reverse={true} direction="col" className="nf-team" />
+        <TeamLabel teamId={awayId} size={44} reverse={true} direction="col" className="nf-team" />
       </div>
-      
-      {f.time ? (
-        <KickoffTime dateISO={f.date} time={f.time} compId={f.compId} />
-      ) : null}
+      <span className="nf-date">{when}</span>
+      {f.time && <KickoffTime dateISO={f.date} time={f.time} compId={f.compId} />}
     </button>
   );
 }
 
-function TeamFixtureRow({ f, onPick }) {
+function FixtureRow({ f, index, onPick }) {
   const comp = fixtures.comps[f.compId];
+  const d = fromISO(f.date);
+  const isRange = f.date !== f.date2;
   return (
-    <button className="team-fixture-card" onClick={() => onPick(f.date)} style={{ "--hover-color": comp.color2 }}>
-      <div className="tf-card-header">
-        <span className="tf-date">{shortDate(f.date)}</span>
-        <VenueBadge isHome={f.isHome} />
-      </div>
-      <TeamLabel teamId={f.oppId} size={36} reverse={true} direction="col" className="" />
+    <button
+      className="fixture-row"
+      style={{ "--i": index }}
+      onClick={() => onPick(f.date)}
+      aria-label={`${f.isHome ? "Home" : "Away"} vs ${fixtures.teams[f.oppId]}, ${comp.name}, ${longDate(f.date)}`}
+    >
+      <span className="fx-date" aria-hidden="true">
+        <b>{d.getDate()}</b>
+        <small>{WD_S[d.getDay()]}</small>
+        {isRange && <small className="range">to {shortDate(f.date2)}</small>}
+      </span>
+      <VenueBadge isHome={f.isHome} />
+      <span className="fx-opp">
+        <Crest teamId={f.oppId} size={28} />
+        <span className="fx-opp-name">{fixtures.teams[f.oppId]}</span>
+      </span>
+      <span className="fx-meta">
+        <CompBadge comp={comp} size={20} />
+        <KickoffTime dateISO={f.date} time={f.time} compId={f.compId} />
+      </span>
     </button>
   );
 }
 
 export default function TeamDetailView({ teamId, compId, onBack, onPick, today }) {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  let teamFixtures = TEAM_FIXTURES[teamId] || [];
-  if (compId != null) {
-    teamFixtures = teamFixtures.filter((f) => f.compId === compId);
-  }
-  
-  const upcoming = teamFixtures.filter((f) => f.date2 >= today);
+  const upcoming = useMemo(() => {
+    let list = TEAM_FIXTURES[teamId] || [];
+    if (compId != null) list = list.filter((f) => f.compId === compId);
+    return list.filter((f) => f.date2 >= today);
+  }, [teamId, compId, today]);
+
   const next = upcoming[0];
   const later = upcoming.slice(1);
+
+  // Group the remaining fixtures by calendar month for scanning
+  const months = useMemo(() => {
+    const out = [];
+    for (const f of later) {
+      const key = f.date.slice(0, 7);
+      if (!out.length || out[out.length - 1].key !== key) out.push({ key, label: monthLabel(f.date), items: [] });
+      out[out.length - 1].items.push(f);
+    }
+    return out;
+  }, [later]);
+
   const primaryCompId = compId != null ? compId : TEAM_COMP[teamId];
   const comp = fixtures.comps[primaryCompId];
+  const teamName = fixtures.teams[teamId];
 
   function exportSeason() {
     exportTeamSchedule(teamId, upcoming);
+    toast(`${upcoming.length} fixtures exported`);
   }
 
   return (
-    <div className="calendar-view">
-      <div className="team-header">
-        <Crest teamId={teamId} size={48} />
-        <div className="team-header-text">
-          <h2>{fixtures.teams[teamId]}</h2>
-          <span className="league-sub" style={{ color: getThemeAccent(primaryCompId) }}>{comp.name}</span>
+    <div>
+      <button className="btn ghost back-link" onClick={onBack}>
+        <ArrowLeft size={14} aria-hidden="true" /> All clubs
+      </button>
+
+      <div className="team-hero">
+        <Crest teamId={teamId} size={60} />
+        <div className="team-hero-text">
+          <h2>{teamName}</h2>
+          <span className="league-chip" style={{ "--league-color": comp.color2 }}>
+            <CompBadge comp={comp} size={18} />
+            {comp.name}
+          </span>
         </div>
-        <button className="jump-today" onClick={onBack}>Change</button>
       </div>
 
       {next ? (
         <>
           <NextFixtureCard f={next} teamId={teamId} onPick={onPick} />
-          <button className="action-btn" style={{ marginTop: 16, width: '100%', justifyContent: 'center' }} onClick={exportSeason}>
-            <Download size={15} /> Export full schedule ({upcoming.length} {upcoming.length === 1 ? "match" : "matches"})
+          <button className="btn block" style={{ marginTop: 14 }} onClick={exportSeason}>
+            <Download size={15} aria-hidden="true" />
+            Export remaining season ({upcoming.length} {upcoming.length === 1 ? "match" : "matches"})
           </button>
-          {later.length > 0 && (
-            <>
-              <div className="team-browse-heading" style={{ marginTop: 22 }}>Upcoming &middot; {later.length} {later.length === 1 ? "match" : "matches"}</div>
-              <div className="team-fixture-list">
-                {later.map((f, i) => <TeamFixtureRow key={i} f={f} onPick={onPick} />)}
+
+          {months.map((group, gi) => (
+            <section key={group.key} className="month-group" aria-labelledby={`month-${group.key}`}>
+              <div className="month-group-label">
+                <span id={`month-${group.key}`}>{group.label}</span>
+                <small>{group.items.length} {group.items.length === 1 ? "match" : "matches"}</small>
               </div>
-            </>
-          )}
+              <div className="fixture-list">
+                {group.items.map((f, i) => (
+                  <FixtureRow key={`${f.date}-${f.oppId}-${f.compId}`} f={f} index={gi === 0 ? i : 0} onPick={onPick} />
+                ))}
+              </div>
+            </section>
+          ))}
         </>
       ) : (
-        <p className="empty-sub" style={{ textAlign: "center", marginTop: 24 }}>No more {fixtures.teams[teamId]} fixtures left in these datasets for this season.</p>
+        <div className="empty-state">
+          <div className="empty-glyph" aria-hidden="true">&#9917;</div>
+          <p className="empty-title">Season complete</p>
+          <p className="empty-sub">No more {teamName} fixtures remain in this dataset.</p>
+        </div>
       )}
     </div>
   );
