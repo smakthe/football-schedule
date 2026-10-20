@@ -6,7 +6,7 @@ import { shortDate } from '../utils/dates.js';
 export default function EmptyState({ date, leagueFilter, onPick }) {
   const prev = adjacentMatchDate(date, -1, leagueFilter);
   const next = adjacentMatchDate(date, 1, leagueFilter);
-  const scope = leagueFilter != null ? fixtures.comps[leagueFilter].name : "the top five leagues";
+  const scope = leagueFilter != null ? fixtures.comps[leagueFilter].name : "the available competitions";
 
   return (
     <div className="empty-state">

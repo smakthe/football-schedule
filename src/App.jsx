@@ -118,8 +118,8 @@ export default function App() {
   }, [filteredOrder, matchesByComp, selectedDate]);
 
   const handleCopyDay = useCallback(async () => {
-    if (await copyDay(buildShareText(selectedDate, matchesByComp))) toast("Day copied to clipboard");
-  }, [copyDay, selectedDate, matchesByComp]);
+    if (await copyDay(buildShareText(selectedDate, matchesByComp, leagueFilter))) toast("Day copied to clipboard");
+  }, [copyDay, selectedDate, matchesByComp, leagueFilter]);
 
   // Swipe the match list to step through days on touch devices
   const swipeRef = useRef(null);

@@ -8,7 +8,7 @@ An interactive, self-contained schedule browser for the 2026–27 European club 
 
 - **Day View:** Browse matches day-by-day with a snap-scrolling date strip, swipe gestures, a one-tap "Today" jump, and shortcuts to the nearest match day when a date is empty.
 - **Month Calendar:** Get a birds-eye view of the season. Stars mark days with marquee rivalry matches; swipe or page between months.
-- **Club Explorer:** Search any club across the top 5 leagues to see its next match and the rest of its season grouped by month.
+- **Club Explorer:** Search any club across the competitions included in this schedule to see its next match and the rest of its season grouped by month.
 - **League Themes:** Filter to a single competition and the whole interface re-themes in that league's colours.
 - **Local Time Conversion:** All kickoff times are automatically converted to your device's local time zone, with a small tag showing the original published time.
 - **Export & Share:** Export single matches, entire days, or a team's rest-of-season schedule to `.ics` format. You can also copy a day's schedule as text to your clipboard.

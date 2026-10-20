@@ -21,11 +21,11 @@ export const MAX_DATE = "2027-06-30";
 
 // Source timezone map — used for kickoff time conversion (README §8)
 export const SOURCE_TZ = {
-  [COMP_EPL]: { zone: "Europe/London", label: "UK" },
-  [COMP_LALIGA]: { zone: "Europe/Madrid", label: "CET" },
-  [COMP_LIGUE1]: { zone: "Europe/Paris", label: "CET" },
-  [COMP_BUNDESLIGA]: { zone: "Europe/Berlin", label: "CET" },
-  [COMP_UCL]: { zone: "Europe/Zurich", label: "CET" },
+  [COMP_EPL]: { zone: "Europe/London", label: "London" },
+  [COMP_LALIGA]: { zone: "Europe/Madrid", label: "Madrid" },
+  [COMP_LIGUE1]: { zone: "Europe/Paris", label: "Paris" },
+  [COMP_BUNDESLIGA]: { zone: "Europe/Berlin", label: "Berlin" },
+  [COMP_UCL]: { zone: "Europe/Zurich", label: "Zurich" },
 };
 
 // Weekday names (Sunday-first)

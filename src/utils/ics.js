@@ -14,15 +14,15 @@ export function icsDateOnly(iso) {
   return iso.replace(/-/g, ""); 
 }
 
-let icsSeq = 0;
-
 // Builds one VEVENT. Timed (Premier League, confirmed kickoff) matches use the
 // real UTC instant computed the same way the on-screen kickoff time is; matches
 // without a confirmed time become an honest all-day event rather than guessing.
 export function matchToVEvent({ dateISO, compName, homeName, awayName, time, round, compId }) {
   const summary = icsEscape(`${homeName} vs ${awayName}`);
   const desc = icsEscape(`${compName}${round ? " \u00b7 Matchday " + round : ""}`);
-  const uid = `fsw-${dateISO}-${homeName}-${awayName}-${icsSeq++}`.replace(/[^A-Za-z0-9-]/g, "").slice(0, 120) + "@football-schedule";
+  const uid = `fsw-${dateISO}-${compName}-${homeName}-${awayName}-${time || "tbc"}-${round ?? "n/a"}`
+    .replace(/[^A-Za-z0-9-]/g, "")
+    .slice(0, 120) + "@football-schedule";
   let dtLines;
   if (time) {
     const zone = (SOURCE_TZ[compId] || SOURCE_TZ[COMP_EPL]).zone;
