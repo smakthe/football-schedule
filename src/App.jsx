@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef, Suspense, lazy } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Radio } from 'lucide-react';
 import fixtures from './data/fixtures.json';
 import { LEAGUE_THEMES, THEME_CSS_VARS } from './config/leagueThemes.js';
 import {
@@ -144,6 +144,10 @@ export default function App() {
                 <span className="brand-sub">European club season</span>
               </span>
             </div>
+            <a className="header-live-link" href="/live" aria-label="Live scores">
+              <Radio size={14} strokeWidth={2.2} aria-hidden="true" />
+              <span>Live scores</span>
+            </a>
           </div>
           <LeagueFilter active={leagueFilter} onChange={setLeagueFilter} />
         </div>

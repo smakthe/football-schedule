@@ -1,6 +1,18 @@
 # ⚽ European Football Schedule 2026-27
 
-An interactive, self-contained schedule browser for the 2026–27 European club football season. Keep track of fixtures across the **Premier League**, **La Liga**, **Bundesliga**, **Ligue 1**, and the **UEFA Champions League**.
+An interactive schedule browser for the 2026–27 European club football season, plus a live scores dashboard. Keep track of fixtures across the **Premier League**, **La Liga**, **Bundesliga**, **Ligue 1**, **Serie A**, and the **UEFA Champions League**.
+
+## 🔴 Live scores (`/live`)
+
+The site now has a live dashboard at **`/live`**, reachable from the **Live scores** button in the header.
+
+- Past results, live scores and upcoming fixtures from ESPN's public football feed.
+- All kick-off times shown in **IST** with the venue-local time alongside.
+- Full day view and month calendar, league filters and the same six-competition theming.
+- Live/current data refreshes every 30 seconds; future matchdays and months refresh every 5 minutes while open.
+- Vercel serverless routes: `/api/football-hub/scoreboard` and `/api/football-hub/month`.
+
+The original schedule browser remains at `/` and keeps its embedded fixture data, club explorer and calendar export.
 
 ![Day View](https://pub-227e9e1887224eafbf51e8c0f4728352.r2.dev/day-view.png)
 
@@ -21,7 +33,7 @@ An interactive, self-contained schedule browser for the 2026–27 European club 
 - **Framework:** [React](https://react.dev/)
 - **Build Tool:** [Vite](https://vitejs.dev/)
 - **Styling:** Vanilla CSS with custom CSS variables (no external UI libraries)
-- **Data:** 100% embedded JSON (no backend or API required)
+- **Data:** Embedded JSON for the schedule views; live ESPN feed for the `/live` dashboard through Vercel serverless functions.
 
 ## 🚀 Getting Started
 
@@ -29,7 +41,7 @@ Follow these steps to set up the project locally.
 
 ### Prerequisites
 
-Make sure you have [Node.js](https://nodejs.org/) (v18 or newer recommended) and `npm` installed.
+Make sure you have [Node.js](https://nodejs.org/) 22.12+ and `npm` installed.
 
 ### Installation
 

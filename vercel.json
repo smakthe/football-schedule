@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    {
+      "source": "/live",
+      "destination": "/live.html"
+    }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "maxDuration": 60
+    }
+  }
+}

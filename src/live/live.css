@@ -1,0 +1,19 @@
+/* Page-level glue for the standalone live dashboard. */
+
+#live-root {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.live-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* The dashboard supplies its own scoped palette and controls; this only
+   removes the browser's default link underline from the schedule shortcut. */
+.live-page a.dsff-icon-btn {
+  text-decoration: none;
+}
